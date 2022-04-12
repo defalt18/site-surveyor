@@ -1,0 +1,9 @@
+{
+  "name": "Site Surveyor",
+  "description": "A handy tool to check to analyse your webpage!",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
