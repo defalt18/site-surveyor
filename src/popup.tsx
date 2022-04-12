@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import './index.css';
+import App from './App';
 
 function ExtensionContainer() {
-	return (
-		<div className='h-128 w-128 bg-yellow-200'>
-			<h1>Hey there</h1>
-		</div>
-	);
+	return <App />;
 }
 
 render(<ExtensionContainer />, document.getElementById('root'));
