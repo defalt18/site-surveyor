@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'Rubik';
+    src: url('./assets/fonts/Rubik/Rubik-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Rubik-Italic';
+    src: url('./assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf');
+}
+
+.text-primary {
+    font-family: 'Rubik';
+    font-size: 1.6rem;
+    line-height: 1.896rem;
+}
+
+.text-secondary {
+    font-family: 'Rubik';
+    font-size: 1.4rem;
+    line-height: 1.659rem;
+}
