@@ -4,11 +4,14 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
-		popup: './src/popup.tsx',
+		index: './src/index.tsx',
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].js',
+	},
+	resolve: {
+		extensions: ['.tsx', '.ts'],
 	},
 	module: {
 		rules: [
@@ -31,8 +34,8 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: './src/popup.html',
-			filename: 'popup.html',
+			template: './src/index.html',
+			filename: 'index.html',
 		}),
 		new CopyPlugin({
 			patterns: [{ from: 'public' }],
