@@ -19,7 +19,7 @@ const Header = () => {
 				</span>
 			</button>
 			<p className='text-primary text-light-primary'>Check For Inclusivity</p>
-			<button>
+			<button onClick={window.close}>
 				<Close />
 			</button>
 		</div>
