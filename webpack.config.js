@@ -4,14 +4,14 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
-		index: './src/index.tsx',
+		index: ['regenerator-runtime/runtime.js', './src/index.tsx'],
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].js',
 	},
 	resolve: {
-		extensions: ['.tsx', '.ts'],
+		extensions: ['.tsx', '.ts', '.js', '.jsx'],
 	},
 	module: {
 		rules: [

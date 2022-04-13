@@ -33,9 +33,9 @@ function App() {
 			<Router>
 				<Header />
 				<Routes>
-					{map(ROUTES, ({ element, ...routeItem }) => {
+					{map(ROUTES, ({ element, ...routeItem }, index) => {
 						const Component = element || undefined;
-						return <Route {...routeItem} element={<Component />} />;
+						return <Route {...routeItem} element={<Component />} key={index} />;
 					})}
 				</Routes>
 			</Router>
