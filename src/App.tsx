@@ -28,7 +28,7 @@ const Header = () => {
 
 function App() {
 	return (
-		<div className='w-[43.1rem] p-2 bg-light-primary max-h-[63.1rem] overflow-scroll'>
+		<div className='w-[43.1rem] p-2 bg-light-primary max-h-[63.1rem]'>
 			<Router>
 				<Header />
 				<Routes>

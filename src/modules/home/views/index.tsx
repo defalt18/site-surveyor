@@ -12,7 +12,7 @@ export default function Home() {
 			{map(keys(FEATURES), (key) => (
 				<SkeletonSection
 					key={key}
-					className={c('rounded-lg px-[1.2rem] py-[2.9rem] last:mb-[1.4rem]')}
+					className={c('rounded-lg px-[1.2rem] py-[2.9rem]')}
 					title={key}
 					titleClassName='text-primary mb-[2.6rem] text-dark-primary'
 				>
