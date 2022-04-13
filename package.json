@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "ts": "tsc -b",
     "dev": "webpack --watch --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   },

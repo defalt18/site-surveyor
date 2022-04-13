@@ -11,11 +11,13 @@ const Header = () => {
 
 	return (
 		<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg mb-[0.5rem] sticky top-2'>
-			{/* @ts-ignore */}
-			<button disabled={isHidden} onClick={() => !isHidden && navigate(location.state.details)}>
-				<span className='w-[1.4rem] text-primary text-light-primary text-4xl'>
-					{!isHidden ? '<' : ''}
-				</span>
+			<button
+				disabled={isHidden}
+				// @ts-ignore
+				onClick={() => !isHidden && navigate(location.state.details)}
+				className='w-[1.4rem] flex-shrink-0'
+			>
+				<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
 			</button>
 			<p className='text-primary text-light-primary'>Check For Inclusivity</p>
 			<button onClick={window.close}>
@@ -32,7 +34,7 @@ function App() {
 				<Header />
 				<Routes>
 					{map(ROUTES, ({ element, ...routeItem }) => {
-						const Component = element;
+						const Component = element || undefined;
 						return <Route {...routeItem} element={<Component />} />;
 					})}
 				</Routes>
