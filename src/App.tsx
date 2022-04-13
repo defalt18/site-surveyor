@@ -1,9 +1,8 @@
 import * as React from 'react';
-import Home from './modules/home/views';
 import Close from './assets/icons/Close';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import VisualImpairment from './modules/disability/modules/visual-impairment/views';
-import { isEmpty } from 'lodash';
+import { isEmpty, map } from 'lodash';
+import { ROUTES } from '../routes';
 
 const Header = () => {
 	const location = useLocation();
@@ -28,12 +27,14 @@ const Header = () => {
 
 function App() {
 	return (
-		<div className='w-[43.1rem] p-2 bg-light-primary max-h-[63.1rem]'>
+		<div className='w-[43.1rem] p-[0.6rem] bg-light-primary h-[63.1rem] flex flex-col'>
 			<Router>
 				<Header />
 				<Routes>
-					<Route path='/disability/visual-impairment' element={<VisualImpairment />} />
-					<Route path='*' element={<Home />} />
+					{map(ROUTES, ({ element, ...routeItem }) => {
+						const Component = element;
+						return <Route {...routeItem} element={<Component />} />;
+					})}
 				</Routes>
 			</Router>
 		</div>
