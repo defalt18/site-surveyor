@@ -18,4 +18,19 @@ const SkeletonIntroduction = ({ className, title, description }: SkeletonContent
 	);
 };
 
-export default SkeletonIntroduction;
+const SkeletonSection: React.FC<{
+	className?: string;
+	title?: string;
+	titleClassName?: string;
+	children?: React.ReactNode;
+}> = (props) => {
+	const { className, title, titleClassName } = props;
+	return (
+		<div className={c('bg-brown-primary/10 p-[1.5rem]', className)}>
+			<p className={c('text-dark-primary text-primary', titleClassName)}>{title}</p>
+			{props.children}
+		</div>
+	);
+};
+
+export { SkeletonIntroduction, SkeletonSection };

@@ -28,7 +28,7 @@ const Header = () => {
 
 function App() {
 	return (
-		<div className='w-[43.1rem] p-2'>
+		<div className='w-[43.1rem] p-2 bg-light-primary'>
 			<Router>
 				<Header />
 				<Routes>
