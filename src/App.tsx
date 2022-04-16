@@ -10,7 +10,7 @@ const Header = () => {
 	const isHidden = isEmpty(location.state);
 
 	return (
-		<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg mb-[0.5rem] sticky top-2'>
+		<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg mb-[0.5rem] sticky top-0 z-10'>
 			<button
 				disabled={isHidden}
 				// @ts-ignore
@@ -29,7 +29,7 @@ const Header = () => {
 
 function App() {
 	return (
-		<div className='w-[43.1rem] p-[0.6rem] bg-light-primary h-[63.1rem] flex flex-col'>
+		<div className='w-[43.1rem] p-[0.6rem] bg-light-primary h-[63.1rem] flex flex-col overflow-scroll'>
 			<Router>
 				<Header />
 				<Routes>
