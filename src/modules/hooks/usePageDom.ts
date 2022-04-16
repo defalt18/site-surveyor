@@ -1,8 +1,8 @@
 import React from 'react';
 import { isUndefined } from 'lodash';
 
-export default function usePageDom(deps: Array<any> = []) {
-	const [dom, setDom] = React.useState<Document | undefined>();
+export default function usePageDom(deps: React.DependencyList = []) {
+	const [dom, setDom] = React.useState<{ dom: Document; tabId: number }>();
 
 	const getPageDOM = () => {
 		chrome.tabs.query({ active: true }, async ([tab]) => {
@@ -13,7 +13,7 @@ export default function usePageDom(deps: Array<any> = []) {
 			});
 			const parser = new DOMParser();
 			const document = parser.parseFromString(response.result.dom, 'text/html');
-			setDom(document);
+			setDom({ dom: document, tabId });
 		});
 	};
 
@@ -21,5 +21,5 @@ export default function usePageDom(deps: Array<any> = []) {
 		getPageDOM();
 	}, deps);
 
-	return { loading: isUndefined(dom), dom };
+	return { loading: isUndefined(dom), ...dom };
 }

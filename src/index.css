@@ -23,3 +23,19 @@
     font-size: 1.4rem;
     line-height: 1.659rem;
 }
+
+.text-tertiary {
+    font-family: 'Rubik';
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+}
+
+.text-small {
+    font-family: 'Rubik';
+    font-size: 1rem;
+    line-height: 1.185rem;
+}
+
+.min-h-104 {
+    min-height: 10.4rem;
+}
