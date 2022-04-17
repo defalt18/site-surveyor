@@ -9,7 +9,9 @@ interface SkeletonContent {
 
 const SkeletonIntroduction = ({ className, title, description }: SkeletonContent) => {
 	return (
-		<div className={c('px-[1.5rem] pt-[2.7rem] pb-[1.7rem] bg-brown-primary/10', className)}>
+		<div
+			className={c('px-[1.5rem] pt-[2.7rem] pb-[1.7rem] bg-brown-primary/10 rounded-lg', className)}
+		>
 			<p className='text-primary text-dark-primary mb-[0.5rem]'>{title}</p>
 			<p className='text-secondary py-[1.1rem] text-gray-primary rounded-lg'>{description}</p>
 		</div>

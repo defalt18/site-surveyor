@@ -2,7 +2,7 @@ import { AnalysisErrors, LayoutContainerProps } from '../../../../molecules/feat
 import { ErrorRenderer } from '../../../utils/renderers';
 import { filter, isEmpty, size, map, startsWith } from 'lodash';
 import Photograph from '../../../../assets/icons/Photograph';
-import Textsvg from '../../../../assets/icons/Textsvg';
+import TextIcon from '../../../../assets/icons/Textsvg';
 import { getComputedStyles } from '../../../utils/utils';
 import Video from '../../../../assets/icons/Video';
 
@@ -27,7 +27,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 		},
 		{
 			name: 'Text',
-			icon: Textsvg,
+			icon: TextIcon,
 			tags: [{ name: 'Advised', color: 'bg-purple-primary' }],
 		},
 		{
@@ -52,7 +52,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 		);
 		const subErrorsImages = map(imagesWithoutAttributes, (imageNode) => ({
 			records: [
-				{ key: 'image src', value: imageNode.src },
+				{ key: 'img src', value: imageNode.src, meta: 'link' },
 				{ key: 'Alt attribute', value: 'empty' },
 			],
 		}));
@@ -67,7 +67,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 		const concernedVideoNodes = filter(allVideoNodes, (video) => !isEmpty(video.src));
 		const subErrorsVideo = map(concernedVideoNodes, (videoNode) => ({
 			records: [
-				{ key: 'Source src', value: videoNode.src },
+				{ key: 'Source src', value: videoNode.src, meta: 'link' },
 				{ key: 'Track', value: 'empty' },
 			],
 		}));

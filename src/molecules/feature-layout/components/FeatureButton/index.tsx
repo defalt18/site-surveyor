@@ -45,7 +45,9 @@ const ErrorCircle = (props: ButtonProps) => {
 					COLORS['border'][state]
 				)}
 			>
-				<p className={c('text-primary', COLORS['text'][state])}>{errorCount}</p>
+				<p className={c('text-primary truncate overflow-ellipsis', COLORS['text'][state])}>
+					{errorCount}
+				</p>
 			</div>
 			<p className={c('text-small', COLORS['text'][state])}>{label}</p>
 		</div>
@@ -67,18 +69,20 @@ const FeatureButton = (props: ButtonProps) => {
 	return (
 		<div
 			className={c(
-				'rounded overflow-hidden max-h-[11.6rem] border border-brown-primary',
+				'rounded-lg overflow-hidden max-h-[11.6rem] border border-brown-primary',
 				containerClassName
 			)}
 		>
 			<div
 				className={c(
-					'flex flex-row items-center justify-between w-full bg-white pr-4',
+					'flex flex-row items-center justify-between w-full bg-white',
 					showErrors ? 'h-[8rem]' : 'h-[10.4rem]'
 				)}
 			>
 				<p className='pl-[2rem] text-primary text-dark-primary w-4/6'>{label}</p>
-				{!showErrors ? <Icon /> : <ErrorCircle {...props} />}
+				<div className={showErrors ? 'mr-6' : 'mr-3'}>
+					{!showErrors ? <Icon /> : <ErrorCircle {...props} />}
+				</div>
 			</div>
 			{!!showErrors && (
 				<button
