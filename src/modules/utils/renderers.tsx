@@ -8,7 +8,7 @@ const renderValue = (className: string, value: string, meta: boolean | undefined
 			{value}
 		</a>
 	) : (
-		<p className={className}>{value}</p>
+		<p className={c('text-dark-primary', className)}>{value}</p>
 	);
 
 export const ErrorRenderer = (error: any) => {
@@ -19,11 +19,7 @@ export const ErrorRenderer = (error: any) => {
 				return (
 					<div className='flex flex-row gap-x-2'>
 						<p className='text-tertiary text-gray-primary flex-shrink-0 w-3/12'>{key}</p>
-						{renderValue(
-							'text-tertiary text-dark-primary flex-shrink overflow-ellipsis line-clamp-3',
-							value,
-							meta
-						)}
+						{renderValue('text-tertiary flex-shrink overflow-ellipsis line-clamp-3', value, meta)}
 					</div>
 				);
 			})}
