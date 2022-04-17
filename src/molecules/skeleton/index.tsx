@@ -22,11 +22,12 @@ const SkeletonSection: React.FC<{
 	className?: string;
 	title?: string;
 	disabled?: boolean;
+	buttonLabel?: string;
 	onClick?: (props?: any) => any;
 	titleClassName?: string;
 	children?: React.ReactNode;
 }> = (props) => {
-	const { className, title, titleClassName, onClick, disabled } = props;
+	const { className, title, titleClassName, onClick, disabled, buttonLabel = 'Test' } = props;
 	return (
 		<div className={c('bg-brown-primary/10 p-[1.5rem]', className)}>
 			<div className='w-full flex flex-row items-center justify-between'>
@@ -40,7 +41,7 @@ const SkeletonSection: React.FC<{
 							{ 'bg-navy-primary/20': disabled }
 						)}
 					>
-						Test
+						{buttonLabel}
 					</button>
 				)}
 			</div>
