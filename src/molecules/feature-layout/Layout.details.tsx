@@ -8,7 +8,7 @@ import { LayoutContext } from './Layout.container';
 import usePageDom from '../../modules/hooks/usePageDom';
 
 const LayoutDetails = (props: LayoutContainerProps) => {
-	const { title, description, checkpoints, checkUtility } = props;
+	const { title, description, checkpoints, checkUtility, testingEnabled = true } = props;
 	const { dom, tabId } = usePageDom();
 	const { errors, setErrors, setView } = React.useContext(LayoutContext);
 
@@ -29,6 +29,7 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 		<div className='flex flex-col gap-y-[0.8rem] flex-grow'>
 			<SkeletonIntroduction title={title} description={description} />
 			<SkeletonSection
+				disabled={!testingEnabled}
 				onClick={onClickTest}
 				title='Accessibility check-points'
 				className='flex flex-col flex-1 rounded-lg'

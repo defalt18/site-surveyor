@@ -23,18 +23,29 @@ export const FEATURES: Record<
 				disabled: false,
 				path: '/disability/visual-impairment',
 			},
-			{ name: 'Speech Impairment' },
-			{ name: 'Hard of Hearing' },
-			{ name: 'Motor Disabilities' },
-			{ name: 'Cognitive Disabilities' },
+			{ name: 'Speech Impairment', disabled: false, path: '/disability/speech-impairment' },
+			{ name: 'Hard of Hearing', disabled: false, path: '/disability/hard-of-hearing' },
+			{ name: 'Motor Disabilities', disabled: false, path: '/disability/motor-disability' },
+			{
+				name: 'Cognitive Disabilities',
+				disabled: false,
+				path: '/disability/cognitive-disability',
+			},
 		],
 	},
 	Identity: {
 		bgColor: 'bg-purple-primary',
-		data: [{ name: 'Gender Identity' }, { name: 'Race' }, { name: 'Race and Ethnicity' }],
+		data: [
+			{ name: 'Gender Identity', disabled: false, path: '/identity/gender-identity' },
+			{ name: 'Age', disabled: false, path: '/identity/age' },
+			{ name: 'Race and Ethnicity', disabled: false, path: '/identity/race-and-ethnicity' },
+		],
 	},
 	Experience: {
 		bgColor: 'bg-green-primary',
-		data: [{ name: 'Language' }, { name: 'Education' }],
+		data: [
+			{ name: 'Language', disabled: false, path: '/experience/language' },
+			{ name: 'Education', disabled: false, path: '/experience/education' },
+		],
 	},
 };

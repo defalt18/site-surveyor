@@ -62,6 +62,7 @@ const FeatureButton = (props: ButtonProps) => {
 		className,
 		containerClassName,
 		showErrors,
+		errorCount,
 		...rest
 	} = props;
 	const Icon = icon ?? undefined;
@@ -92,7 +93,7 @@ const FeatureButton = (props: ButtonProps) => {
 						className
 					)}
 					{...rest}
-					disabled={Boolean(state === 'success' || rest.disabled || props.errorCount === 0)}
+					disabled={Boolean(state === 'success' || rest.disabled || errorCount === 0)}
 				>
 					<p className='text-tertiary text-white'>{LABELS[state]}</p>
 				</button>
