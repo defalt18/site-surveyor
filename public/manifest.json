@@ -3,6 +3,9 @@
   "description": "A handy tool to check to analyse your webpage!",
   "version": "1.0",
   "manifest_version": 3,
+  "icons": {
+    "128": "ss@128.png"
+  },
   "action": {
     "default_popup": "index.html"
   },
