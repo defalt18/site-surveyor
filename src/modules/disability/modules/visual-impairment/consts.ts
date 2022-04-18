@@ -52,22 +52,22 @@ export const ModuleSpecification: LayoutContainerProps = {
 		);
 		const subErrorsImages = map(imagesWithoutAttributes, (imageNode) => ({
 			records: [
-				{ key: 'img src', value: imageNode.src, meta: 'link' },
+				{ key: 'img src', value: `"${imageNode.src}"`, meta: 'link' },
 				{ key: 'Alt attribute', value: 'empty' },
 			],
 		}));
 		const pollutedTexts = await getComputedStyles(tabId);
 		const subErrorsTexts = map(pollutedTexts, ({ text, size }) => ({
 			records: [
-				{ key: 'Text', value: text },
-				{ key: 'Font-size', value: size },
+				{ key: 'Text', value: `"${text}"` },
+				{ key: 'Font-size', value: `"${size}"` },
 			],
 		}));
 		const allVideoNodes = dom.querySelectorAll('video');
 		const concernedVideoNodes = filter(allVideoNodes, (video) => !isEmpty(video.src));
 		const subErrorsVideo = map(concernedVideoNodes, (videoNode) => ({
 			records: [
-				{ key: 'Source src', value: videoNode.src, meta: 'link' },
+				{ key: 'Source src', value: `"${videoNode.src}"`, meta: 'link' },
 				{ key: 'Track', value: 'empty' },
 			],
 		}));

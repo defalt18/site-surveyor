@@ -14,7 +14,7 @@ const renderValue = (className: string, value: string, meta: boolean | undefined
 export const ErrorRenderer = (error: any) => {
 	const { records } = error;
 	return (
-		<div className='flex flex-col gap-y-2 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg'>
+		<div className='flex flex-col gap-y-3 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg'>
 			{map(records, ({ key, value, meta }) => {
 				return (
 					<div className='flex flex-row gap-x-2'>
