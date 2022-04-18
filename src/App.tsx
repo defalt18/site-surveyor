@@ -10,26 +10,28 @@ const Header = () => {
 	const isHidden = isEmpty(location.state);
 
 	return (
-		<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg mb-[0.5rem] sticky top-0 z-10'>
-			<button
-				disabled={isHidden}
-				// @ts-ignore
-				onClick={() => !isHidden && navigate(location.state.details)}
-				className='w-[1.4rem] flex-shrink-0'
-			>
-				<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
-			</button>
-			<p className='text-primary text-light-primary'>Check For Inclusivity</p>
-			<button onClick={window.close}>
-				<Close />
-			</button>
+		<div className='bg-light-primary sticky top-0 z-10'>
+			<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg my-[0.5rem]'>
+				<button
+					disabled={isHidden}
+					// @ts-ignore
+					onClick={() => !isHidden && navigate(location.state.details)}
+					className='w-[1.4rem] flex-shrink-0'
+				>
+					<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
+				</button>
+				<p className='text-primary text-light-primary'>Check For Inclusivity</p>
+				<button onClick={window.close}>
+					<Close />
+				</button>
+			</div>
 		</div>
 	);
 };
 
 function App() {
 	return (
-		<div className='w-[43.1rem] p-[0.6rem] bg-light-primary h-[60rem] flex flex-col overflow-auto'>
+		<div className='w-[43.1rem] p-[0.6rem] pt-0 bg-light-primary h-[60rem] flex flex-col overflow-auto'>
 			<Router>
 				<Header />
 				<Routes>
