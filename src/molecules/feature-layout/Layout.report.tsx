@@ -113,7 +113,7 @@ const LayoutReport = (props: LayoutContainerProps) => {
 					<p className='text-primary text-dark-primary'>{checkpoint}</p>
 					<div className='flex flex-row gap-x-[0.8rem] flex-wrap'>
 						{tags.map(({ name, color }) => (
-							<div className={c('rounded-lg text-white px-[1.7rem] py-[0.3rem]', color)}>
+							<div className={c('rounded-lg text-white px-[1.7rem] py-[0.3rem]', color)} key={name}>
 								{name}
 							</div>
 						))}
@@ -125,6 +125,7 @@ const LayoutReport = (props: LayoutContainerProps) => {
 				{map(checkpointErrors, ({ title, subErrorCount, subErrors, errorType }) => (
 					<ErrorAccordion
 						title={title}
+						key={title}
 						subErrors={subErrors}
 						errorCount={subErrorCount}
 						ErrorRenderer={AnalysisErrorRenderer}
