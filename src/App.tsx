@@ -2,7 +2,7 @@ import * as React from 'react';
 import Close from './assets/icons/Close';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { isEmpty, map } from 'lodash';
-import { ROUTES } from '../routes';
+import { ROUTES } from './routes';
 
 const Header = () => {
 	const location = useLocation();
