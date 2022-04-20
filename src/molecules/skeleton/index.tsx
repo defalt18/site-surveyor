@@ -21,17 +21,30 @@ const SkeletonIntroduction = ({ className, title, description }: SkeletonContent
 const SkeletonSection: React.FC<{
 	className?: string;
 	title?: string;
+	renderTitle?: () => JSX.Element;
 	disabled?: boolean;
 	buttonLabel?: string;
 	onClick?: (props?: any) => any;
 	titleClassName?: string;
 	children?: React.ReactNode;
 }> = (props) => {
-	const { className, title, titleClassName, onClick, disabled, buttonLabel = 'Test' } = props;
+	const {
+		className,
+		title,
+		titleClassName,
+		onClick,
+		disabled,
+		buttonLabel = 'Test',
+		renderTitle,
+	} = props;
 	return (
 		<div className={c('bg-brown-primary/10 p-[1.5rem]', className)}>
 			<div className='w-full flex flex-row items-center justify-between'>
-				<p className={c('text-dark-primary text-primary', titleClassName)}>{title}</p>
+				{renderTitle ? (
+					renderTitle()
+				) : title ? (
+					<p className={c('text-dark-primary text-primary', titleClassName)}>{title}</p>
+				) : null}
 				{!!onClick && (
 					<button
 						disabled={disabled}

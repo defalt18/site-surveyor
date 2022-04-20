@@ -5,6 +5,7 @@ import { LayoutContainerProps } from './types';
 import { SkeletonSection } from '../skeleton';
 import { LayoutContext } from './Layout.container';
 import ArrowDrop from '../../assets/icons/ArrowDrop';
+import { VIEWS } from './consts';
 
 const COLORS: Record<string, Record<'error' | 'warning' | 'success', string>> = {
 	background: {
@@ -64,6 +65,9 @@ const ErrorAccordion = ({
 	ErrorRenderer: LayoutContainerProps['errorRenderer'];
 }) => {
 	const [showErrors, toggle] = React.useState<boolean>(false);
+	const [itemCount, setCount] = React.useState<number>(Math.min(10, errorCount));
+
+	const showMore = () => setCount((count) => Math.min(count + 10, errorCount));
 	return (
 		<div className='rounded-lg'>
 			<div
@@ -86,7 +90,19 @@ const ErrorAccordion = ({
 					</button>
 				</div>
 			</div>
-			{!!showErrors && map(subErrors, ErrorRenderer)}
+			{!!showErrors && (
+				<>
+					{map(subErrors.slice(0, itemCount), ErrorRenderer)}{' '}
+					{itemCount < errorCount && (
+						<div
+							className='bg-white cursor-pointer border border-brown-primary border-t-0 rounded-b-lg text-tertiary text-dark-primary text-center px-[1.9rem] py-[0.9rem]'
+							onClick={showMore}
+						>
+							Show {errorCount - itemCount} more {'>'}
+						</div>
+					)}
+				</>
+			)}
 		</div>
 	);
 };
@@ -95,6 +111,7 @@ const LayoutReport = (props: LayoutContainerProps) => {
 	const { title, checkpoints, errorRenderer: AnalysisErrorRenderer } = props;
 	const {
 		screen: { checkpoint },
+		setView,
 		errors,
 	} = React.useContext(LayoutContext);
 
@@ -106,8 +123,23 @@ const LayoutReport = (props: LayoutContainerProps) => {
 	const totalErrorCount = errors[checkpoint].count;
 	const checkpointErrors = errors[checkpoint].errors;
 
+	const renderTitle = () => (
+		<div className='flex flex-row items-center gap-x-2'>
+			<button
+				className='text-dark-primary text-primary hover:underline'
+				onClick={() => setView({ view: VIEWS.DETAILS })}
+			>
+				{title}
+			</button>
+			<p className='text-dark-primary text-primary'>
+				{' '}
+				{'>'} {checkpoint}
+			</p>
+		</div>
+	);
+
 	return (
-		<SkeletonSection title={`${title} > ${checkpoint}`} className='flex flex-col flex-1 rounded-lg'>
+		<SkeletonSection renderTitle={renderTitle} className='flex flex-col flex-1 rounded-lg'>
 			<div className='my-[2rem] rounded-lg border border-brown-primary flex flex-row justify-between items-center p-[2rem] bg-white'>
 				<div className='flex flex-col gap-y-[1.8rem]'>
 					<p className='text-primary text-dark-primary'>{checkpoint}</p>

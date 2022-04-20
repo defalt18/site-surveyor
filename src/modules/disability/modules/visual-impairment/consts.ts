@@ -48,7 +48,8 @@ export const ModuleSpecification: LayoutContainerProps = {
 		const allImages = dom.querySelectorAll('img');
 		const imagesWithoutAttributes = filter(
 			allImages,
-			(image) => isEmpty(image.alt) && !startsWith(image.src, 'chrome-extension://')
+			(image) =>
+				isEmpty(image.alt) && !isEmpty(image.src) && !startsWith(image.src, 'chrome-extension://')
 		);
 		const subErrorsImages = map(imagesWithoutAttributes, (imageNode) => ({
 			records: [
