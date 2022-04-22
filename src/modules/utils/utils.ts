@@ -4,7 +4,12 @@ export const getComputedStyles = async (tabId: number) => {
 		func: () => {
 			const result: {
 				metaDataText: Array<{ text: string; size: string }>;
-				metaDataContrast: Array<{ text: string; foreground: string; background: string }>;
+				metaDataContrast: Array<{
+					text: string;
+					foreground: string;
+					background: string;
+					fontSize: number;
+				}>;
 			} = { metaDataText: [], metaDataContrast: [] };
 			const allTexts = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, button');
 			const TRANSPARENT_CONTAINER = 'rgba(0, 0, 0, 0)';
@@ -29,7 +34,12 @@ export const getComputedStyles = async (tabId: number) => {
 					const foreground = window.getComputedStyle(node).color;
 					if (fontSize < '16px') result.metaDataText.push({ text: textContent, size: fontSize });
 					if (background !== TRANSPARENT_CONTAINER)
-						result.metaDataContrast.push({ text: textContent, background, foreground });
+						result.metaDataContrast.push({
+							text: textContent,
+							background,
+							foreground,
+							fontSize: parseInt(fontSize.slice(0, fontSize.length - 2)),
+						});
 				}
 			});
 			return result;
@@ -51,5 +61,17 @@ export function RGBToHex(rgb_string: string) {
 	if (g.length === 1) g = '0' + g;
 	if (b.length === 1) b = '0' + b;
 
-	return r + g + b;
+	return '#' + r + g + b;
+}
+
+export function rgbaToHex(rgba_string: string) {
+	let rgba = rgba_string.match(
+		/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i
+	);
+	return rgba && rgba.length === 4
+		? '#' +
+				('0' + parseInt(rgba[1], 10).toString(16)).slice(-2) +
+				('0' + parseInt(rgba[2], 10).toString(16)).slice(-2) +
+				('0' + parseInt(rgba[3], 10).toString(16)).slice(-2)
+		: '';
 }

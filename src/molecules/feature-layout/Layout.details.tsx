@@ -33,7 +33,7 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 		<div className='flex flex-col gap-y-[0.8rem] flex-grow'>
 			<SkeletonIntroduction title={title} description={description} />
 			<SkeletonSection
-				disabled={!testingEnabled}
+				disabled={!testingEnabled || loading}
 				onClick={onClickTest}
 				buttonLabel={isUndefined(errors) ? 'Test' : 'Test again'}
 				title='Accessibility check-points'

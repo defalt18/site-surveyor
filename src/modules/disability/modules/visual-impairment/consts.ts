@@ -3,14 +3,12 @@ import { ErrorRenderer } from '../../../utils/renderers';
 import { filter, isEmpty, size, map, startsWith, reduce } from 'lodash';
 import Photograph from '../../../../assets/icons/Photograph';
 import TextIcon from '../../../../assets/icons/Textsvg';
-import { getComputedStyles, RGBToHex } from '../../../utils/utils';
+import { getComputedStyles, rgbaToHex, RGBToHex } from '../../../utils/utils';
 import Video from '../../../../assets/icons/Video';
-import axios from 'axios';
 import ContrastIcon from '../../../../assets/icons/ContrastIcon';
 import ContrastErrorAccordion from './renderers';
-
-const getURL = (foreground: string, background: string) =>
-	`https://webaim.org/resources/contrastchecker/?fcolor=${foreground}&bcolor=${background}&api`;
+//@ts-ignore
+import ColorContrastChecker from 'color-contrast-checker';
 
 export const ModuleSpecification: LayoutContainerProps = {
 	title: 'Vision Impairment',
@@ -60,6 +58,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 		},
 	],
 	checkUtility: async (dom: Document, tabId) => {
+		const checker = new ColorContrastChecker();
 		const allImages = dom.querySelectorAll('img');
 		const imagesWithoutAttributes = filter(
 			allImages,
@@ -73,34 +72,34 @@ export const ModuleSpecification: LayoutContainerProps = {
 			],
 		}));
 		const { metaDataText: pollutedTexts, metaDataContrast } = await getComputedStyles(tabId);
-		const contrastRatios = await reduce(
+		const contrastIssues = reduce(
 			metaDataContrast,
-			async (result, { background, foreground, text }) => {
-				const response = await axios.get(getURL(RGBToHex(foreground), RGBToHex(background)));
-				const resolvedArray = await result;
-				if (isEmpty(resolvedArray))
+			(result, { background, foreground, text, fontSize }) => {
+				const foregroundColor = !checker.isValidSixDigitColorCode(RGBToHex(foreground))
+					? rgbaToHex(foreground)
+					: RGBToHex(foreground);
+				const backgroundColor = !checker.isValidSixDigitColorCode(RGBToHex(background))
+					? rgbaToHex(background)
+					: RGBToHex(background);
+				const isValidAA = checker.isLevelAA(foregroundColor, backgroundColor, fontSize);
+				const isValidAAA = checker.isLevelAAA(foregroundColor, backgroundColor, fontSize);
+				const l1 = checker.hexToLuminance(foregroundColor);
+				const l2 = checker.hexToLuminance(backgroundColor);
+				const ratio = checker.getContrastRatio(l1, l2);
+				if (!isValidAA || !isValidAAA)
 					return [
+						...result,
 						{
-							ratio: parseFloat(response.data.ratio),
+							ratio: ratio.toFixed(2),
 							text,
 							background,
 							foreground,
 						},
 					];
-				else
-					return [
-						...resolvedArray,
-						{
-							ratio: parseFloat(response.data.ratio),
-							text,
-							background,
-							foreground,
-						},
-					];
+				else return result;
 			},
-			{} as Promise<Array<{ ratio: number; text: string; background: string; foreground: string }>>
+			[] as Array<{ ratio: number; text: string; background: string; foreground: string }>
 		);
-		const contrastIssues = filter(contrastRatios, ({ ratio }) => ratio < 4.3);
 		const subErrorsTexts = map(pollutedTexts, ({ text, size }) => ({
 			records: [
 				{ key: 'Text', value: `"${text}"` },
