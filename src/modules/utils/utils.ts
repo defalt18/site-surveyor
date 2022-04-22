@@ -6,7 +6,7 @@ export const getComputedStyles = async (tabId: number) => {
 				metaDataText: Array<{ text: string; size: string }>;
 				metaDataContrast: Array<{ text: string; foreground: string; background: string }>;
 			} = { metaDataText: [], metaDataContrast: [] };
-			const allTexts = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
+			const allTexts = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div, button');
 			const TRANSPARENT_CONTAINER = 'rgba(0, 0, 0, 0)';
 			allTexts.forEach((node) => {
 				if (node.textContent.trim() !== '') {
