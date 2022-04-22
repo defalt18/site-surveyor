@@ -100,7 +100,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 			},
 			{} as Promise<Array<{ ratio: number; text: string; background: string; foreground: string }>>
 		);
-		const contrastIssues = filter(contrastRatios, () => true);
+		const contrastIssues = filter(contrastRatios, ({ ratio }) => ratio < 4.3);
 		const subErrorsTexts = map(pollutedTexts, ({ text, size }) => ({
 			records: [
 				{ key: 'Text', value: `"${text}"` },

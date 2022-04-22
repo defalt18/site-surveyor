@@ -12,7 +12,7 @@ export default function ContrastErrorAccordion(props: ErrorAccordionProps) {
 				return (
 					<div
 						key={index}
-						className='border-2 border-brown-primary flex flex-row justify-between items-center p-8 gap-x-2'
+						className='border-2 border-brown-primary flex flex-row justify-between items-center p-8'
 					>
 						<p className='text-secondary text-dark-primary flex-grow overflow-ellipsis line-clamp-2'>
 							{error.text}

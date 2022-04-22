@@ -117,7 +117,7 @@ export const ErrorCircle = ({
 		<div className='flex-shrink-0 flex flex-col items-center gap-y-[0.4rem]'>
 			<div
 				className={c(
-					'flex-shrink-0 rounded-full flex items-center justify-center border h-[3.5rem] w-[3.5rem]',
+					'flex-shrink-0 rounded-full flex items-center justify-center border h-[3.5rem] min-w-35',
 					COLORS.border[type],
 					overrides?.border
 				)}

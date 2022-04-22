@@ -39,3 +39,7 @@
 .min-h-104 {
     min-height: 10.4rem;
 }
+
+.min-w-35 {
+    min-width: 3.5rem;
+}
