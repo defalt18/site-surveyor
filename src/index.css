@@ -43,3 +43,7 @@
 .min-w-35 {
     min-width: 3.5rem;
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
