@@ -1,10 +1,16 @@
 import { AnalysisErrors, LayoutContainerProps } from '../../../../molecules/feature-layout/types';
 import { ErrorRenderer } from '../../../utils/renderers';
-import { filter, isEmpty, size, map, startsWith } from 'lodash';
+import { filter, isEmpty, size, map, startsWith, reduce } from 'lodash';
 import Photograph from '../../../../assets/icons/Photograph';
 import TextIcon from '../../../../assets/icons/Textsvg';
-import { getComputedStyles } from '../../../utils/utils';
+import { getComputedStyles, RGBToHex } from '../../../utils/utils';
 import Video from '../../../../assets/icons/Video';
+import axios from 'axios';
+import ContrastIcon from '../../../../assets/icons/ContrastIcon';
+import ContrastErrorAccordion from './renderers';
+
+const getURL = (foreground: string, background: string) =>
+	`https://webaim.org/resources/contrastchecker/?fcolor=${foreground}&bcolor=${background}&api`;
 
 export const ModuleSpecification: LayoutContainerProps = {
 	title: 'Vision Impairment',
@@ -20,10 +26,17 @@ export const ModuleSpecification: LayoutContainerProps = {
 				{ name: 'Level A', color: 'bg-orange-primary' },
 				{ name: 'WCAG', color: 'bg-muave-secondary' },
 			],
-			tip: {
-				description:
-					'Images that do not convey content, are decorative, or contain content that is already conveyed in text are given empty alternative text alt="" which is ignored by screen readers.',
-			},
+			tips: [
+				{
+					description:
+						'Images that do not convey content, are decorative, or contain content that is already conveyed in text are given empty alternative text alt="" which is ignored by screen readers.',
+				},
+			],
+		},
+		{
+			name: 'Contrast',
+			icon: ContrastIcon,
+			ErrorAccordion: ContrastErrorAccordion,
 		},
 		{
 			name: 'Text',
@@ -38,10 +51,12 @@ export const ModuleSpecification: LayoutContainerProps = {
 				{ name: 'Level A', color: 'bg-orange-primary' },
 				{ name: 'WCAG', color: 'bg-muave-secondary' },
 			],
-			tip: {
-				description:
-					'Provide a text transcript that conveys the same information as video-only media or Provide an audio-track that conveys the same information as video-only media.',
-			},
+			tips: [
+				{
+					description:
+						'Provide a text transcript that conveys the same information as video-only media or Provide an audio-track that conveys the same information as video-only media.',
+				},
+			],
 		},
 	],
 	checkUtility: async (dom: Document, tabId) => {
@@ -57,7 +72,35 @@ export const ModuleSpecification: LayoutContainerProps = {
 				{ key: 'Alt attribute', value: 'empty' },
 			],
 		}));
-		const pollutedTexts = await getComputedStyles(tabId);
+		const { metaDataText: pollutedTexts, metaDataContrast } = await getComputedStyles(tabId);
+		const contrastRatios = await reduce(
+			metaDataContrast,
+			async (result, { background, foreground, text }) => {
+				const response = await axios.get(getURL(RGBToHex(foreground), RGBToHex(background)));
+				const resolvedArray = await result;
+				if (isEmpty(resolvedArray))
+					return [
+						{
+							ratio: parseFloat(response.data.ratio),
+							text,
+							background,
+							foreground,
+						},
+					];
+				else
+					return [
+						...resolvedArray,
+						{
+							ratio: parseFloat(response.data.ratio),
+							text,
+							background,
+							foreground,
+						},
+					];
+			},
+			{} as Promise<Array<{ ratio: number; text: string; background: string; foreground: string }>>
+		);
+		const contrastIssues = filter(contrastRatios, () => true);
 		const subErrorsTexts = map(pollutedTexts, ({ text, size }) => ({
 			records: [
 				{ key: 'Text', value: `"${text}"` },
@@ -109,6 +152,19 @@ export const ModuleSpecification: LayoutContainerProps = {
 						errorType: 'warning',
 						subErrorCount: size(subErrorsVideo),
 						subErrors: subErrorsVideo,
+					},
+				],
+			},
+			Contrast: {
+				name: 'Contrast',
+				type: size(contrastIssues) === 0 ? 'success' : 'error',
+				count: size(contrastIssues),
+				errors: [
+					{
+						title: 'Inadequate contrast ratio',
+						errorType: 'error',
+						subErrorCount: size(contrastIssues),
+						subErrors: contrastIssues,
 					},
 				],
 			},
