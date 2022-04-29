@@ -1,27 +1,30 @@
 import React from 'react';
-import { ErrorAccordionProps } from '../../../../molecules/feature-layout/types';
 import { map } from 'lodash';
 
-export default function ContrastErrorAccordion(props: ErrorAccordionProps) {
-	const { subErrors } = props;
+export default function ContrastErrorRenderer(error: any, index: number) {
+	const { records } = error;
 	return (
-		<div className='flex flex-col gap-y-3'>
-			{map(subErrors, (error, index) => {
-				const foregroundStyles = { backgroundColor: error.foreground };
-				const backgroundStyles = { backgroundColor: error.background };
+		<div
+			key={index}
+			className='flex flex-col gap-y-3 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg'
+		>
+			{map(records as Array<any>, ({ key, value, foreground, background }, ind) => {
+				const isLast = ind === records.length - 1;
+				const foregroundStyles = isLast ? { backgroundColor: foreground } : null;
+				const backgroundStyles = isLast ? { backgroundColor: background } : null;
 				return (
-					<div
-						key={index}
-						className='border-2 border-brown-primary flex flex-row justify-between items-center p-8'
-					>
-						<p className='text-secondary text-dark-primary flex-grow overflow-ellipsis line-clamp-2'>
-							{error.text}
-						</p>
-						<p className='text-secondary text-dark-primary flex-shrink-0 mx-8'>{error.ratio} : 1</p>
-						<div className='flex flex-row items-center gap-x-2 flex-shrink-0'>
-							<div className='h-6 w-6 border border-brown-primary' style={foregroundStyles} />
-							<div className='h-6 w-6 border border-brown-primary' style={backgroundStyles} />
-						</div>
+					<div key={ind} className='flex flex-row gap-x-2'>
+						<p className='text-tertiary text-gray-primary flex-shrink-0 w-3/12'>{key}</p>
+						{!isLast ? (
+							<p className='text-tertiary text-dark-primary line-clamp-1 overflow-ellipsis'>
+								{value}
+							</p>
+						) : (
+							<div className='flex flex-row items-center gap-x-2 flex-shrink-0'>
+								<div className='h-6 w-6 border border-brown-primary' style={foregroundStyles} />
+								<div className='h-6 w-6 border border-brown-primary' style={backgroundStyles} />
+							</div>
+						)}
 					</div>
 				);
 			})}

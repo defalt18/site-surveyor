@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import c from 'classnames';
+import { reduce, map, isEmpty, groupBy, countBy, values, sumBy } from 'lodash';
+import { ErrorDetailsType } from '../../types';
+import { ErrorCircle } from '../../../../modules/utils/renderers';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	label: string;
-	state?: 'error' | 'success' | 'warning';
-	icon: () => JSX.Element;
+	state?: ErrorDetailsType['type'];
+	errors?: ErrorDetailsType['errors'];
+	icon: React.ComponentType<React.SVGProps<any>>;
 	showErrors?: boolean;
-	errorCount?: number;
 	containerClassName?: string;
 }
 
-const LABELS: Record<ButtonProps['state'], string> = {
+const LABELS: Record<ButtonProps['state'], string | Array<string>> = {
 	error: 'View Errors >',
 	warning: 'View Warnings >',
-	success: 'All set!',
+	success: ['All set!', 'View All >'],
 };
 
 const COLORS: Record<string, Record<ButtonProps['state'], string>> = {
@@ -34,26 +37,6 @@ const COLORS: Record<string, Record<ButtonProps['state'], string>> = {
 	},
 };
 
-const ErrorCircle = (props: ButtonProps) => {
-	const { state = 'success', errorCount } = props;
-	const label = state === 'warning' ? 'Warnings' : 'Errors';
-	return (
-		<div className='flex flex-col items-center gap-y-2'>
-			<div
-				className={c(
-					'rounded-full h-[3.5rem] w-[3.5rem] flex items-center justify-center border',
-					COLORS['border'][state]
-				)}
-			>
-				<p className={c('text-primary truncate overflow-ellipsis', COLORS['text'][state])}>
-					{errorCount}
-				</p>
-			</div>
-			<p className={c('text-small', COLORS['text'][state])}>{label}</p>
-		</div>
-	);
-};
-
 const FeatureButton = (props: ButtonProps) => {
 	const {
 		label,
@@ -62,10 +45,34 @@ const FeatureButton = (props: ButtonProps) => {
 		className,
 		containerClassName,
 		showErrors,
-		errorCount,
+		errors = [],
 		...rest
 	} = props;
 	const Icon = icon ?? undefined;
+	const totalItemCount = useMemo(
+		() => (isEmpty(errors) ? 0 : reduce(errors, (acc, item) => acc + item?.subErrorCount ?? 0, 0)),
+		[errors]
+	);
+
+	const isNotJustTips = React.useMemo(
+		() => Boolean(countBy(errors, 'errorType').success !== totalItemCount),
+		[errors, totalItemCount]
+	);
+
+	const classifiedErrors = React.useMemo(
+		() =>
+			isEmpty(errors)
+				? []
+				: reduce(
+						values(groupBy(errors, 'errorType')),
+						(acc, item) => {
+							const sumOfItems = sumBy(item, 'subErrorCount');
+							return [...acc, { errorType: item[0].errorType, subErrorCount: sumOfItems }];
+						},
+						[]
+				  ),
+		[errors]
+	);
 
 	return (
 		<div
@@ -76,13 +83,35 @@ const FeatureButton = (props: ButtonProps) => {
 		>
 			<div
 				className={c(
-					'flex flex-row items-center justify-between w-full bg-white',
+					'flex flex-row items-center justify-between w-full bg-white gap-x-4',
 					showErrors ? 'h-[8rem]' : 'h-[10.4rem]'
 				)}
 			>
-				<p className='pl-[2rem] text-primary text-dark-primary w-4/6'>{label}</p>
-				<div className={showErrors ? 'mr-6' : 'mr-3'}>
-					{!showErrors ? <Icon /> : <ErrorCircle {...props} />}
+				<p className='pl-[1.6rem] text-primary text-dark-primary flex-shrink-0'>{label}</p>
+				<div className={showErrors ? 'flex flex-row items-center mr-6 gap-x-[0.4rem]' : 'mr-3'}>
+					{!showErrors ? (
+						<Icon />
+					) : !isEmpty(errors) ? (
+						map(classifiedErrors, ({ errorType, subErrorCount }, index) =>
+							isNotJustTips && errorType === 'success' ? null : (
+								<ErrorCircle
+									key={index}
+									type={errorType}
+									totalErrorCount={subErrorCount}
+									errorCountAdjustment={
+										subErrorCount > 1000 ? '1000+' : subErrorCount > 500 ? '500+' : undefined
+									}
+									overrides={{
+										label: 'text-small',
+										container: 'flex-1',
+										text: c({ 'px-2': subErrorCount > 500 }),
+									}}
+								/>
+							)
+						)
+					) : (
+						<ErrorCircle type='success' totalErrorCount={0} />
+					)}
 				</div>
 			</div>
 			{!!showErrors && (
@@ -93,9 +122,11 @@ const FeatureButton = (props: ButtonProps) => {
 						className
 					)}
 					{...rest}
-					disabled={Boolean(state === 'success' || rest.disabled || errorCount === 0)}
+					disabled={Boolean(rest.disabled || totalItemCount === 0)}
 				>
-					<p className='text-tertiary text-white'>{LABELS[state]}</p>
+					<p className='text-tertiary text-white'>
+						{state === 'success' ? LABELS[state][Number(totalItemCount > 0)] : LABELS[state]}
+					</p>
 				</button>
 			)}
 		</div>

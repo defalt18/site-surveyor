@@ -43,17 +43,19 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 					<Loader />
 				) : (
 					<div className='grid grid-cols-2 gap-x-[0.9rem] gap-y-[0.8rem] mt-[2.8rem]'>
-						{map(checkpoints, ({ name, icon }, index) => (
-							<FeatureButton
-								key={index}
-								label={name}
-								icon={icon}
-								onClick={() => onClickFeature(name)}
-								showErrors={!isUndefined(errors)}
-								errorCount={errors ? errors[name].count : undefined}
-								state={errors ? errors[name].type : undefined}
-							/>
-						))}
+						{map(checkpoints, ({ name, icon }, index) => {
+							return (
+								<FeatureButton
+									key={index}
+									label={name}
+									icon={icon}
+									onClick={() => onClickFeature(name)}
+									showErrors={!isUndefined(errors)}
+									errors={errors ? errors[name]?.errors : undefined}
+									state={errors ? errors[name].type : undefined}
+								/>
+							);
+						})}
 					</div>
 				)}
 			</SkeletonSection>

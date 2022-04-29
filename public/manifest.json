@@ -9,5 +9,6 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["activeTab", "scripting"]
+  "permissions": ["activeTab", "scripting", "http://*/*", "https://*/*"],
+  "host_permissions": ["https://*/*"]
 }

@@ -9,7 +9,7 @@ export default function usePageDom(deps: React.DependencyList = []) {
 			const tabId = tab.id;
 			const [response] = await chrome.scripting.executeScript({
 				target: { tabId },
-				func: () => ({ dom: document.body.innerHTML }),
+				func: () => ({ dom: document.documentElement.innerHTML }),
 			});
 			const parser = new DOMParser();
 			const document = parser.parseFromString(response.result.dom, 'text/html');

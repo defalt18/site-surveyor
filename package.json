@@ -6,9 +6,11 @@
   "scripts": {
     "ts": "tsc -b",
     "dev": "webpack --watch --config webpack.dev.js",
+    "prod-debug": "webpack --watch --config webpack.prod.js",
     "build": "webpack --config webpack.prod.js"
   },
   "dependencies": {
+    "@emotion/css": "^11.9.0",
     "@types/chrome": "^0.0.181",
     "@types/lodash": "^4.14.181",
     "@types/node": "^17.0.23",

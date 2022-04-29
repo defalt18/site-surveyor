@@ -14,8 +14,8 @@
 
 .text-primary {
     font-family: 'Rubik';
-    font-size: 1.6rem;
-    line-height: 1.896rem;
+    font-size: 1.6rem!important;
+    line-height: 1.896rem!important;
 }
 
 .text-secondary {
@@ -46,4 +46,8 @@
 
 ::-webkit-scrollbar {
     display: none;
+}
+
+.max-w-30 {
+    max-width: 3rem;
 }

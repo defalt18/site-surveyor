@@ -1,24 +1,25 @@
 import React from 'react';
 import c from 'classnames';
-import { map } from 'lodash';
+import { isEmpty, map, size } from 'lodash';
 import { ErrorAccordionProps } from '../../molecules/feature-layout/types';
 import ArrowDrop from '../../assets/icons/ArrowDrop';
+import { css } from '@emotion/css';
 
 const COLORS: Record<string, Record<'error' | 'warning' | 'success', string>> = {
 	background: {
 		error: 'bg-red-primary',
 		warning: 'bg-yellow-primary',
-		success: '',
+		success: 'bg-green-primary',
 	},
 	text: {
 		error: 'text-red-primary',
 		warning: 'text-yellow-primary',
-		success: '',
+		success: 'text-green-primary',
 	},
 	border: {
 		error: 'border-red-primary',
 		warning: 'border-yellow-primary',
-		success: '',
+		success: 'border-green-primary',
 	},
 };
 
@@ -53,6 +54,8 @@ export const DefaultErrorAccordion = ({
 	errorCount,
 	subErrors,
 	ErrorRenderer,
+	tags,
+	tips,
 }: ErrorAccordionProps) => {
 	const [showErrors, toggle] = React.useState<boolean>(false);
 	const [itemCount, setCount] = React.useState<number>(Math.min(10, errorCount));
@@ -62,22 +65,48 @@ export const DefaultErrorAccordion = ({
 		<div className='rounded-lg'>
 			<div
 				className={c(
-					'px-[1.8rem] py-4 flex flex-row text-white text-primary justify-between items-center rounded-lg',
+					'px-[1.8rem] py-4 flex flex-row text-white text-primary justify-between rounded-lg gap-x-[2rem] w-full',
 					COLORS.background[type],
 					{ 'rounded-b-none': showErrors }
 				)}
 			>
-				<p className='text-white text-secondary truncate overflow-ellipsis'>{title}</p>
-				<div className='flex flex-row items-center'>
-					<ErrorCircle
-						type={type}
-						totalErrorCount={errorCount}
-						showLabel={false}
-						overrides={{ text: 'text-white', border: 'border-white' }}
-					/>
+				<div className='flex flex-col justify-center'>
+					<p className='text-white text-secondary overflow-ellipsis line-clamp-3'>{title}</p>
+					{!isEmpty(tags) && (
+						<div className='flex flex-row gap-x-[0.8rem] flex-wrap items-center mt-[0.6rem]'>
+							{tags.map(({ name, color }) => (
+								<div
+									className={c(
+										'rounded-lg text-white px-[0.8rem] py-[0.4rem] text-tertiary',
+										color
+									)}
+									key={name}
+								>
+									{name}
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+				<div className='flex flex-row items-center flex-shrink-0 h-full gap-x-[2rem]'>
+					{type !== 'success' && (
+						<ErrorCircle
+							type={type}
+							totalErrorCount={errorCount}
+							errorCountAdjustment={
+								errorCount > 500 ? '500+' : errorCount > 100 ? '100+' : `${errorCount}`
+							}
+							showLabel={false}
+							size={28}
+							overrides={{
+								text: c('text-white', { 'px-2': errorCount > 99 }),
+								border: 'border-white',
+							}}
+						/>
+					)}
 					<button
 						onClick={() => toggle(!showErrors)}
-						className={c('w-[2.8rem] h-[2.8rem] ml-4', {
+						className={c('w-[2.8rem] h-[2.8rem]', {
 							'rotate-180': showErrors,
 						})}
 					>
@@ -96,39 +125,90 @@ export const DefaultErrorAccordion = ({
 							Show {errorCount - itemCount} more {'>'}
 						</div>
 					)}
+					{map(tips, TipRenderer)}
 				</>
 			)}
 		</div>
 	);
 };
 
+const getSizeStyles = (size: number) => {
+	return css`
+		height: ${size / 10}rem;
+		min-width: ${size / 10}rem;
+	`;
+};
+
+const SHAPE_STYLES = {
+	circle: 'rounded-full flex items-center justify-center',
+	rect: 'px-[1.6rem] py-[0.4rem] rounded-large',
+};
+
+const getLabel = (type: string, count: number) => {
+	if (type === 'error') return 'Errors';
+	if (type === 'warning') return 'Warnings';
+	if (type === 'success' && count > 0) return 'Points of Inclusions';
+	return 'Errors';
+};
+
 export const ErrorCircle = ({
+	size = 35,
 	type,
 	totalErrorCount,
+	errorCountAdjustment,
+	label,
+	shape = 'circle',
 	showLabel = true,
 	overrides,
 }: {
+	size?: number;
 	type: 'error' | 'warning' | 'success';
 	totalErrorCount: number;
+	errorCountAdjustment?: string;
+	shape?: 'rect' | 'circle';
+	label?: string;
 	showLabel?: boolean;
-	overrides?: { text: string; border: string };
+	overrides?: { text?: string; border?: string; label?: string; container?: string };
 }) => {
+	const sizeStyles = React.useMemo(() => getSizeStyles(size), [size]);
 	return (
-		<div className='flex-shrink-0 flex flex-col items-center gap-y-[0.4rem]'>
+		<div
+			className={c('flex-shrink-0 flex flex-col items-center gap-y-[0.7rem]', overrides?.container)}
+		>
 			<div
 				className={c(
-					'flex-shrink-0 rounded-full flex items-center justify-center border h-[3.5rem] min-w-35',
+					'flex-shrink-0 border',
+					SHAPE_STYLES[shape],
 					COLORS.border[type],
+					{ [sizeStyles]: shape === 'circle' },
 					overrides?.border
 				)}
 			>
-				<p className={c('text-tertiary', COLORS.text[type], overrides?.text)}>{totalErrorCount}</p>
+				<p className={c('text-tertiary', COLORS.text[type], overrides?.text)}>
+					{errorCountAdjustment ?? totalErrorCount}
+				</p>
 			</div>
 			{!!showLabel && (
-				<p className={c('text-tertiary', COLORS.text[type], overrides?.text)}>
-					{type === 'warning' ? 'Warnings' : 'Errors'}
+				<p
+					className={c(
+						'text-tertiary overflow-ellipsis line-clamp-1 text-center',
+						COLORS.text[type],
+						overrides?.label
+					)}
+				>
+					{label ? label : getLabel(type, totalErrorCount)}
 				</p>
 			)}
 		</div>
 	);
 };
+
+export const TipRenderer = (tip: { description: string }, index: number, arr: Array<any>) => (
+	<div
+		key={index}
+		className='bg-mocha-secondary/50 border border-brown-primary border-t-0 p-[2rem] last:rounded-b-lg'
+	>
+		<p className='text-green-primary text-primary mb-4'>Tip {size(arr) > 1 ? index + 1 : ''}</p>
+		<p className='text-tertiary text-dark-primary'>{tip?.description}</p>
+	</div>
+);

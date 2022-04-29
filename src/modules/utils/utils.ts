@@ -12,7 +12,7 @@ export const getComputedStyles = async (tabId: number) => {
 				}>;
 			} = { metaDataText: [], metaDataContrast: [] };
 			const allTexts = document.querySelectorAll(
-				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong'
+				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong, details, summary'
 			);
 			const TRANSPARENT_CONTAINER = 'rgba(0, 0, 0, 0)';
 			allTexts.forEach((node) => {
