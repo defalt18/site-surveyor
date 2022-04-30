@@ -19,11 +19,8 @@ export const getComputedStyles = async (tabId: number) => {
 				if (node.textContent.trim() !== '') {
 					const fontSize = window.getComputedStyle(node).fontSize;
 					const textContent = node.textContent;
-					const { x, y } = node.getBoundingClientRect();
-					const allElementsOnXAndY = document.elementsFromPoint(
-						x + window.scrollX,
-						y + window.scrollY
-					);
+					const { left: x, top: y } = node.getBoundingClientRect();
+					const allElementsOnXAndY = document.elementsFromPoint(x, y);
 					let background = TRANSPARENT_CONTAINER;
 					for (let index in allElementsOnXAndY) {
 						const item = allElementsOnXAndY[index];

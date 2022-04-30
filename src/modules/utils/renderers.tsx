@@ -1,11 +1,11 @@
 import React from 'react';
 import c from 'classnames';
 import { isEmpty, map, size } from 'lodash';
-import { ErrorAccordionProps } from '../../molecules/feature-layout/types';
+import { ErrorAccordionProps, STATUS_TYPE } from '../../molecules/feature-layout/types';
 import ArrowDrop from '../../assets/icons/ArrowDrop';
 import { css } from '@emotion/css';
 
-const COLORS: Record<string, Record<'error' | 'warning' | 'success', string>> = {
+const COLORS: Record<string, Record<STATUS_TYPE, string>> = {
 	background: {
 		error: 'bg-red-primary',
 		warning: 'bg-yellow-primary',
@@ -34,8 +34,15 @@ const renderValue = (className: string, value: string, meta: boolean | undefined
 
 export const ErrorRenderer = (error: any) => {
 	const { records } = error;
+	if (isEmpty(records)) return null;
+	const isSingleRecord = size(records) === 1;
 	return (
-		<div className='flex flex-col gap-y-3 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg'>
+		<div
+			className={c(
+				'flex flex-col gap-y-3 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg',
+				{ 'py-[2.1rem]': isSingleRecord }
+			)}
+		>
 			{map(records, ({ key, value, meta }) => {
 				return (
 					<div className='flex flex-row gap-x-2'>
@@ -62,7 +69,7 @@ export const DefaultErrorAccordion = ({
 
 	const showMore = () => setCount((count) => Math.min(count + 10, errorCount));
 	return (
-		<div className='rounded-lg'>
+		<div key={title} className='rounded-lg'>
 			<div
 				className={c(
 					'px-[1.8rem] py-4 flex flex-row text-white text-primary justify-between rounded-lg gap-x-[2rem] w-full',
@@ -74,7 +81,7 @@ export const DefaultErrorAccordion = ({
 					<p className='text-white text-secondary overflow-ellipsis line-clamp-3'>{title}</p>
 					{!isEmpty(tags) && (
 						<div className='flex flex-row gap-x-[0.8rem] flex-wrap items-center mt-[0.6rem]'>
-							{tags.map(({ name, color }) => (
+							{tags.map(({ name, color = 'bg-orange-primary' }) => (
 								<div
 									className={c(
 										'rounded-lg text-white px-[0.8rem] py-[0.4rem] text-tertiary',
@@ -144,7 +151,7 @@ const SHAPE_STYLES = {
 	rect: 'px-[1.6rem] py-[0.4rem] rounded-large',
 };
 
-const getLabel = (type: string, count: number) => {
+const getLabel = (type: STATUS_TYPE, count: number) => {
 	if (type === 'error') return 'Errors';
 	if (type === 'warning') return 'Warnings';
 	if (type === 'success' && count > 0) return 'Points of Inclusions';
@@ -162,7 +169,7 @@ export const ErrorCircle = ({
 	overrides,
 }: {
 	size?: number;
-	type: 'error' | 'warning' | 'success';
+	type: STATUS_TYPE;
 	totalErrorCount: number;
 	errorCountAdjustment?: string;
 	shape?: 'rect' | 'circle';
@@ -209,6 +216,9 @@ export const TipRenderer = (tip: { description: string }, index: number, arr: Ar
 		className='bg-mocha-secondary/50 border border-brown-primary border-t-0 p-[2rem] last:rounded-b-lg'
 	>
 		<p className='text-green-primary text-primary mb-4'>Tip {size(arr) > 1 ? index + 1 : ''}</p>
-		<p className='text-tertiary text-dark-primary'>{tip?.description}</p>
+		<p
+			className='text-tertiary text-dark-primary'
+			dangerouslySetInnerHTML={{ __html: tip?.description }}
+		/>
 	</div>
 );

@@ -1,6 +1,6 @@
 import { AnalysisErrors, LayoutContainerProps } from '../../../../molecules/feature-layout/types';
 import { ErrorRenderer } from '../../../utils/renderers';
-import { filter, isEmpty, size, map, startsWith, reduce, result } from 'lodash';
+import { filter, isEmpty, size, map, startsWith, reduce } from 'lodash';
 import { getComputedStyles, rgbaToHex, RGBToHex } from '../../../utils/utils';
 //@ts-ignore
 import ColorContrastChecker from 'color-contrast-checker';
@@ -11,136 +11,10 @@ import {
 	ContrastIcon,
 	PhotographIcon,
 	VideoIcon,
-	StructureIcon,
 	SVGIcon,
 } from '../../../../assets/icons';
 import ContrastErrorRenderer from './renderers';
-
-const getVideoErrors = (videoNodes: NodeListOf<HTMLVideoElement>) => {
-	const concernedVideoNodes = filter(videoNodes, (video) => !isEmpty(video.src));
-	const subWarnings = map(concernedVideoNodes, (videoNode) => ({
-		records: [
-			{ key: 'Source src', value: `"${videoNode.src}"`, meta: 'link' },
-			{ key: 'Track', value: 'empty' },
-		],
-	}));
-	const subErrors = reduce(
-		videoNodes,
-		(acc, node) => {
-			const validNodesWithTitle = filter(node.childNodes, { localName: 'title' });
-			const validNodesWithTrack = filter(node.childNodes, { localName: 'track' });
-			if (isEmpty(validNodesWithTitle)) {
-				const [titleErrors] = acc;
-				acc[0] = [
-					...titleErrors,
-					{
-						records: [
-							{ key: 'Source src', value: node.src, meta: 'link' },
-							{ key: 'Accessible Name', value: 'empty' },
-						],
-					},
-				];
-			}
-
-			if (isEmpty(validNodesWithTrack)) {
-				const [, trackErrors] = acc;
-				acc[1] = [
-					...trackErrors,
-					{
-						records: [
-							{ key: 'Source src', value: node.src, meta: 'link' },
-							{ key: 'Track', value: 'empty' },
-						],
-					},
-				];
-			}
-
-			return acc;
-		},
-		[[], []]
-	);
-
-	const errors = reduce(
-		[subWarnings, subErrors[0], subErrors[1]],
-		(res, item, index) => {
-			if (index === 0) {
-				if (!isEmpty(item))
-					return [
-						...res,
-						{
-							title: 'Provide synchronized audio descriptions for videos',
-							errorType: 'warning',
-							tags: [
-								{ name: '1.2.1', color: 'bg-orange-primary' },
-								{ name: 'Level A', color: 'bg-orange-primary' },
-							],
-							subErrorCount: size(subWarnings),
-							subErrors: subWarnings,
-							tips: [
-								{
-									description:
-										'Provide a text transcript that conveys the same information as video-only media or Provide an audio-track that conveys the same information as video-only media.',
-								},
-							],
-						},
-					];
-			}
-			if (index === 1) {
-				if (!isEmpty(item)) {
-					return [
-						...res,
-						{
-							title: 'Absence of accessible name for video',
-							errorType: 'error',
-							tags: [
-								{ name: '1.1.1', color: 'bg-orange-primary' },
-								{ name: 'Level A', color: 'bg-orange-primary' },
-							],
-							subErrorCount: size(item),
-							subErrors: item,
-							tips: [
-								{
-									description:
-										'A <title> tag that briefly describes the video or gives its title is provided so that users know what it is when they encounter it and can decide what action if any they want to take with it. ',
-								},
-							],
-						},
-					];
-				}
-			}
-			if (index === 2) {
-				if (!isEmpty(item)) {
-					return [
-						...res,
-						{
-							title: 'Absence of child <track> in <video> tag',
-							errorType: 'error',
-							tags: [
-								{ name: '1.2.1', color: 'bg-orange-primary' },
-								{ name: 'Level A', color: 'bg-orange-primary' },
-							],
-							subErrorCount: size(item),
-							subErrors: item,
-						},
-					];
-				}
-			}
-
-			return res;
-		},
-		[]
-	);
-
-	return {
-		errors,
-		type:
-			size(subErrors[0]) > 0 || size(subErrors[1])
-				? 'error'
-				: size(subWarnings) > 0
-				? 'warning'
-				: 'success',
-	};
-};
+import { getAudioErrors, getVideoErrors } from './utils';
 
 export const ModuleSpecification: LayoutContainerProps = {
 	title: 'Vision Impairment',
@@ -177,11 +51,6 @@ export const ModuleSpecification: LayoutContainerProps = {
 		{
 			name: 'Audios',
 			icon: AudioIcon,
-			tags: [{ name: 'WCAG', color: 'bg-muave-secondary' }],
-		},
-		{
-			name: 'Structure',
-			icon: StructureIcon,
 			tags: [{ name: 'WCAG', color: 'bg-muave-secondary' }],
 		},
 	],
@@ -283,6 +152,34 @@ export const ModuleSpecification: LayoutContainerProps = {
 			[]
 		);
 
+		const allSVGs = dom.querySelectorAll('svg');
+		const pollutedSvgs = reduce(
+			allSVGs,
+			(res, SVGNode) => {
+				const allTitleNodes = filter(SVGNode.childNodes, { localName: 'title' });
+				if (isEmpty(allTitleNodes)) {
+					return [
+						...res,
+						{
+							records: [
+								{ key: 'Tag type', value: '<svg>' },
+								{ key: 'Accessible Name', value: 'empty' },
+							],
+						},
+					];
+				}
+				return res;
+			},
+			[]
+		);
+
+		const allAudioNodes = dom.querySelectorAll('audio');
+		const {
+			type: audioErrorsType,
+			totalCount: totalAudioErrorCount,
+			errors: audioErrors,
+		} = getAudioErrors(allAudioNodes);
+
 		return {
 			Images: {
 				name: 'Images',
@@ -338,18 +235,34 @@ export const ModuleSpecification: LayoutContainerProps = {
 			},
 			SVGs: {
 				name: 'SVGs',
-				type: 'success',
-				count: 0,
+				type: isEmpty(pollutedSvgs) ? 'success' : 'error',
+				count: size(pollutedSvgs),
+				errors: isEmpty(pollutedSvgs)
+					? undefined
+					: [
+							{
+								title: 'Absence of accessible name for SVG',
+								errorType: 'error',
+								tags: [
+									{ name: '1.1.1', color: 'bg-orange-primary' },
+									{ name: 'Level A', color: 'bg-orange-primary' },
+								],
+								subErrorCount: size(pollutedSvgs),
+								subErrors: pollutedSvgs,
+								tips: [
+									{
+										description:
+											'A <title> tag that gives an appropriate title to SVG is provided so that users can get to know the purpose.',
+									},
+								],
+							},
+					  ],
 			},
 			Audios: {
 				name: 'Audios',
-				type: 'success',
-				count: 0,
-			},
-			Structure: {
-				name: 'Structure',
-				type: 'success',
-				count: 0,
+				type: audioErrorsType,
+				count: totalAudioErrorCount,
+				errors: audioErrors,
 			},
 		} as AnalysisErrors;
 	},

@@ -52,7 +52,6 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 									onClick={() => onClickFeature(name)}
 									showErrors={!isUndefined(errors)}
 									errors={errors ? errors[name]?.errors : undefined}
-									state={errors ? errors[name].type : undefined}
 								/>
 							);
 						})}

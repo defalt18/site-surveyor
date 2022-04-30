@@ -1,5 +1,5 @@
 import React from 'react';
-import Lottie from 'react-lottie';
+import Lottie from 'lottie-react';
 import c from 'classnames';
 import * as animationData from '../../assets/lotties/loader.json';
 
@@ -15,7 +15,7 @@ const defaultOptions = {
 const Loader = ({ className }: { className?: string }) => {
 	return (
 		<div className={c(className)}>
-			<Lottie options={defaultOptions} height={200} width={200} />
+			<Lottie height={200} width={200} {...defaultOptions} />
 		</div>
 	);
 };

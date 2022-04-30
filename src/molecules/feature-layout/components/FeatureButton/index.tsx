@@ -1,25 +1,26 @@
 import React, { useMemo } from 'react';
 import c from 'classnames';
-import { reduce, map, isEmpty, groupBy, countBy, values, sumBy } from 'lodash';
+import { reduce, map, isEmpty, groupBy, keys, values, sumBy } from 'lodash';
 import { ErrorDetailsType } from '../../types';
 import { ErrorCircle } from '../../../../modules/utils/renderers';
 
+type STATUS_TYPE = 'warning' | 'success' | 'error';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	label: string;
-	state?: ErrorDetailsType['type'];
 	errors?: ErrorDetailsType['errors'];
 	icon: React.ComponentType<React.SVGProps<any>>;
 	showErrors?: boolean;
 	containerClassName?: string;
 }
 
-const LABELS: Record<ButtonProps['state'], string | Array<string>> = {
-	error: 'View Errors >',
-	warning: 'View Warnings >',
-	success: ['All set!', 'View All >'],
+const LABELS: Record<STATUS_TYPE, Array<string>> = {
+	error: ['View Errors >', 'View All >'],
+	warning: ['View Warnings >'],
+	success: ['All set!', 'View Tips >'],
 };
 
-const COLORS: Record<string, Record<ButtonProps['state'], string>> = {
+const COLORS: Record<string, Record<STATUS_TYPE, string>> = {
 	background: {
 		error: 'bg-red-primary',
 		warning: 'bg-yellow-primary',
@@ -38,41 +39,35 @@ const COLORS: Record<string, Record<ButtonProps['state'], string>> = {
 };
 
 const FeatureButton = (props: ButtonProps) => {
-	const {
-		label,
-		state = 'success',
-		icon,
-		className,
-		containerClassName,
-		showErrors,
-		errors = [],
-		...rest
-	} = props;
+	const { label, icon, className, containerClassName, showErrors, errors = [], ...rest } = props;
 	const Icon = icon ?? undefined;
 	const totalItemCount = useMemo(
 		() => (isEmpty(errors) ? 0 : reduce(errors, (acc, item) => acc + item?.subErrorCount ?? 0, 0)),
 		[errors]
 	);
 
-	const isNotJustTips = React.useMemo(
-		() => Boolean(countBy(errors, 'errorType').success !== totalItemCount),
-		[errors, totalItemCount]
-	);
-
 	const classifiedErrors = React.useMemo(
 		() =>
-			isEmpty(errors)
-				? []
-				: reduce(
-						values(groupBy(errors, 'errorType')),
-						(acc, item) => {
-							const sumOfItems = sumBy(item, 'subErrorCount');
-							return [...acc, { errorType: item[0].errorType, subErrorCount: sumOfItems }];
-						},
-						[]
-				  ),
+			reduce(
+				values(groupBy(errors, 'errorType')),
+				(acc, item) => {
+					const sumOfItems = sumBy(item, 'subErrorCount');
+					return {
+						...acc,
+						[item[0].errorType]: sumOfItems,
+					};
+				},
+				{} as Record<STATUS_TYPE, number>
+			),
 		[errors]
 	);
+
+	const isNotJustTips = classifiedErrors.warning > 0 || classifiedErrors.error > 0;
+
+	if (isNotJustTips) delete classifiedErrors.success;
+
+	const type =
+		classifiedErrors.error > 0 ? 'error' : classifiedErrors.warning > 0 ? 'warning' : 'success';
 
 	return (
 		<div
@@ -87,30 +82,43 @@ const FeatureButton = (props: ButtonProps) => {
 					showErrors ? 'h-[8rem]' : 'h-[10.4rem]'
 				)}
 			>
-				<p className='pl-[1.6rem] text-primary text-dark-primary flex-shrink-0'>{label}</p>
-				<div className={showErrors ? 'flex flex-row items-center mr-6 gap-x-[0.4rem]' : 'mr-3'}>
+				<p lang='en' className='pl-[1.6rem] text-primary text-dark-primary flex-shrink hyphens'>
+					{label}
+				</p>
+				<div
+					className={showErrors ? 'flex flex-row items-center mr-6 gap-x-[0.4rem] w-fit' : 'mr-3'}
+				>
 					{!showErrors ? (
 						<Icon />
 					) : !isEmpty(errors) ? (
-						map(classifiedErrors, ({ errorType, subErrorCount }, index) =>
-							isNotJustTips && errorType === 'success' ? null : (
-								<ErrorCircle
-									key={index}
-									type={errorType}
-									totalErrorCount={subErrorCount}
-									errorCountAdjustment={
-										subErrorCount > 1000 ? '1000+' : subErrorCount > 500 ? '500+' : undefined
-									}
-									overrides={{
-										label: 'text-small',
-										container: 'flex-1',
-										text: c({ 'px-2': subErrorCount > 500 }),
-									}}
-								/>
-							)
-						)
+						map(keys(classifiedErrors), (keyName: 'success' | 'error' | 'warning', index) => (
+							<ErrorCircle
+								key={index}
+								type={keyName}
+								totalErrorCount={classifiedErrors[keyName]}
+								errorCountAdjustment={
+									classifiedErrors[keyName] > 1000
+										? '1000+'
+										: classifiedErrors[keyName] > 500
+										? '500+'
+										: undefined
+								}
+								overrides={{
+									label: 'text-small w-min',
+									container: 'flex-1',
+									text: c({ 'px-2': classifiedErrors[keyName] > 500 }),
+								}}
+							/>
+						))
 					) : (
-						<ErrorCircle type='success' totalErrorCount={0} />
+						<ErrorCircle
+							type='success'
+							totalErrorCount={0}
+							overrides={{
+								label: 'text-small w-min',
+								container: 'flex-1',
+							}}
+						/>
 					)}
 				</div>
 			</div>
@@ -118,14 +126,18 @@ const FeatureButton = (props: ButtonProps) => {
 				<button
 					className={c(
 						'h-[3.6rem] flex justify-center items-center w-full',
-						COLORS.background[state],
+						COLORS.background[type],
 						className
 					)}
 					{...rest}
 					disabled={Boolean(rest.disabled || totalItemCount === 0)}
 				>
 					<p className='text-tertiary text-white'>
-						{state === 'success' ? LABELS[state][Number(totalItemCount > 0)] : LABELS[state]}
+						{type === 'error'
+							? LABELS[type][Number(classifiedErrors.warning > 0)]
+							: type === 'success'
+							? LABELS[type][Number(classifiedErrors.success > 0)]
+							: LABELS[type][0]}
 					</p>
 				</button>
 			)}

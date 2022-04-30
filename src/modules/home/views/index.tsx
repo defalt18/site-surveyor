@@ -30,7 +30,11 @@ export default function Home() {
 									)}
 								>
 									<p className='text-primary pl-[2rem] w-4/6 text-left'>{item.name}</p>
-									{!!Icon && <Icon className={item.iconClassName} />}
+									{!!Icon && (
+										<div className='flex-shrink-0'>
+											<Icon className={item.iconClassName} />
+										</div>
+									)}
 								</button>
 							);
 						})}
