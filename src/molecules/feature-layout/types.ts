@@ -30,7 +30,7 @@ export interface LayoutContainerProps {
 		tips?: Array<{ description: string }>;
 	}>;
 	testingEnabled?: boolean;
-	checkUtility: (dom: Document, tabId: number) => Promise<AnalysisErrors>;
+	checkUtility: (dom: Document, tabId: number, otherAttribs?: any) => Promise<AnalysisErrors>;
 }
 
 export interface ErrorAccordionProps {

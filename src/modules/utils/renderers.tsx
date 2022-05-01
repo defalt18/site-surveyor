@@ -23,6 +23,9 @@ const COLORS: Record<string, Record<STATUS_TYPE, string>> = {
 	},
 };
 
+const gridAutoStyles = css`
+	grid-template-columns: max-content auto;
+`;
 const renderValue = (className: string, value: string, meta: boolean | undefined) =>
 	meta ? (
 		<a className={c('no-underline hover:underline', className, 'text-blue-400')} href={value}>
@@ -39,16 +42,17 @@ export const ErrorRenderer = (error: any) => {
 	return (
 		<div
 			className={c(
-				'flex flex-col gap-y-3 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg',
-				{ 'py-[2.1rem]': isSingleRecord }
+				'grid gap-y-3 w-full gap-x-8 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg',
+				{ 'py-[2.1rem]': isSingleRecord },
+				gridAutoStyles
 			)}
 		>
 			{map(records, ({ key, value, meta }) => {
 				return (
-					<div className='flex flex-row gap-x-2'>
-						<p className='text-tertiary text-gray-primary flex-shrink-0 w-3/12'>{key}</p>
+					<>
+						<p className='text-tertiary text-gray-primary flex-shrink-0'>{key}</p>
 						{renderValue('text-tertiary flex-shrink overflow-ellipsis line-clamp-3', value, meta)}
-					</div>
+					</>
 				);
 			})}
 		</div>

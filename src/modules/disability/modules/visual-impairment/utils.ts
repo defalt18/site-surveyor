@@ -84,8 +84,7 @@ export const getVideoErrors = (videoNodes: NodeListOf<HTMLVideoElement>) => {
 							subErrors: item,
 							tips: [
 								{
-									description:
-										'A <title> tag that briefly describes the video or gives its title is provided so that users know what it is when they encounter it and can decide what action if any they want to take with it. ',
+									description: `A &lt;title&gt; tag that briefly describes the video or gives its title is provided so that users know what it is when they encounter it and can decide what action if any they want to take with it`,
 								},
 							],
 						},

@@ -10,16 +10,16 @@ import Loader from '../loader';
 
 const LayoutDetails = (props: LayoutContainerProps) => {
 	const { title, description, checkpoints, checkUtility, testingEnabled = true } = props;
-	const { dom, tabId } = usePageDom();
+	const { dom, tabId, otherAttribs } = usePageDom();
 	const [loading, setLoading] = React.useState<boolean>(false);
 	const { errors, setErrors, setView } = React.useContext(LayoutContext);
 
 	const onClickTest = React.useCallback(async () => {
 		setLoading(true);
-		const analysisErrors = await checkUtility(dom, tabId);
+		const analysisErrors = await checkUtility(dom, tabId, otherAttribs);
 		setErrors(analysisErrors);
 		setLoading(false);
-	}, [checkUtility, setErrors, dom, tabId, setLoading]);
+	}, [checkUtility, setErrors, dom, tabId, setLoading, otherAttribs]);
 
 	const onClickFeature = React.useCallback(
 		(checkpointName: string) => {

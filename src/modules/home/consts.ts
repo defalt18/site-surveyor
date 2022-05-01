@@ -74,7 +74,12 @@ export const FEATURES: Record<
 		bgColor: 'bg-green-primary',
 		data: [
 			{ name: 'Language', icon: HomeLang, disabled: false, path: '/experience/language' },
-			{ name: 'Education', icon: HomeWifi, disabled: false, path: '/experience/education' },
+			{
+				name: 'Access to high-tech',
+				icon: HomeWifi,
+				disabled: false,
+				path: '/experience/education',
+			},
 		],
 	},
 };

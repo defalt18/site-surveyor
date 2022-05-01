@@ -69,7 +69,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 			],
 		}));
 		const { metaDataText: pollutedTexts, metaDataContrast } = await getComputedStyles(tabId);
-		const [contrastIssuesAA, contrastIssuesAAA] = reduce(
+		const contrastIssuesAA = reduce(
 			metaDataContrast,
 			(result, { background, foreground, text, fontSize }) => {
 				const foregroundColor = !checker.isValidSixDigitColorCode(RGBToHex(foreground))
@@ -79,28 +79,13 @@ export const ModuleSpecification: LayoutContainerProps = {
 					? rgbaToHex(background)
 					: RGBToHex(background);
 				const isValidAA = checker.isLevelAA(foregroundColor, backgroundColor, fontSize);
-				const isValidAAA = checker.isLevelAAA(foregroundColor, backgroundColor, fontSize);
 				const l1 = checker.hexToLuminance(foregroundColor);
 				const l2 = checker.hexToLuminance(backgroundColor);
 				const ratio = checker.getContrastRatio(l1, l2);
 
 				if (!isValidAA) {
-					const [AAIssues] = result;
-					result[0] = [
-						...AAIssues,
-						{
-							records: [
-								{ key: 'Text', value: text },
-								{ key: 'Contrast', value: ratio.toFixed(2) },
-								{ key: 'Colors', foreground, background },
-							],
-						},
-					];
-				}
-				if (!isValidAAA) {
-					const [, AAAIssues] = result;
-					result[1] = [
-						...AAAIssues,
+					return [
+						...result,
 						{
 							records: [
 								{ key: 'Text', value: text },
@@ -113,11 +98,9 @@ export const ModuleSpecification: LayoutContainerProps = {
 
 				return result;
 			},
-			[[], []] as Array<
-				Array<{
-					records: Array<{ key: string; value?: string; foreground?: string; background?: string }>;
-				}>
-			>
+			[] as Array<{
+				records: Array<{ key: string; value?: string; foreground?: string; background?: string }>;
+			}>
 		);
 		const subErrorsTexts = map(pollutedTexts, ({ text, size }) => ({
 			records: [
@@ -129,18 +112,17 @@ export const ModuleSpecification: LayoutContainerProps = {
 		const { errors: videoErrors, type: videoErrorsType } = getVideoErrors(allVideoNodes);
 
 		const contrastErrors = reduce(
-			[contrastIssuesAA, contrastIssuesAAA],
+			[contrastIssuesAA],
 			(acc, item, index) => {
 				if (!isEmpty(item)) {
-					const isFirst = index === 0;
 					return [
 						...acc,
 						{
-							title: `Minimum contrast of ${isFirst ? '4.5' : '6.5'} : 1  not satisfied`,
+							title: `Minimum contrast of '4.5' : 1  not satisfied`,
 							errorType: 'error',
 							tags: [
 								{ name: '1.4.3', color: 'bg-orange-primary' },
-								{ name: `Level ${isFirst ? 'A' : 'AA'}`, color: 'bg-orange-primary' },
+								{ name: 'Level A', color: 'bg-orange-primary' },
 							],
 							subErrorCount: size(item),
 							subErrors: item,
@@ -229,8 +211,8 @@ export const ModuleSpecification: LayoutContainerProps = {
 			},
 			Contrast: {
 				name: 'Contrast',
-				type: size([...contrastIssuesAA, ...contrastIssuesAAA]) === 0 ? 'success' : 'error',
-				count: size([...contrastIssuesAA, ...contrastIssuesAAA]),
+				type: 'success',
+				count: size(contrastIssuesAA),
 				errors: contrastErrors,
 			},
 			SVGs: {
@@ -251,8 +233,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 								subErrors: pollutedSvgs,
 								tips: [
 									{
-										description:
-											'A <title> tag that gives an appropriate title to SVG is provided so that users can get to know the purpose.',
+										description: `A<b className="text-primary text-green-primary"> &lt;title&gt;</b> tag that gives an appropriate title to SVG is provided so that users can get to know the purpose.`,
 									},
 								],
 							},

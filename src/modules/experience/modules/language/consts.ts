@@ -22,7 +22,8 @@ export const ModuleSpecification: LayoutContainerProps = {
 		},
 	],
 	testingEnabled: true,
-	checkUtility: async (dom) => {
+	checkUtility: async (dom, _, otherAttribs) => {
+		console.log('document', dom);
 		const nonEmptyTextNodes = filter(
 			dom.querySelectorAll(
 				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong, details, summary'
@@ -56,23 +57,18 @@ export const ModuleSpecification: LayoutContainerProps = {
 			],
 			[]
 		);
-		const pollutedHTML = reduce(
-			filter(dom.querySelectorAll('html'), { lang: '' }),
-			(res) => [...res, { records: [{ key: 'lang attribute', value: 'absent' }] }],
-			[]
-		);
 
 		const allHTMLErrorsAndWarnings = reduce(
-			[pollutedHTML, getPollutedTextTagsLangA, getPollutedTextTagsLangB],
+			[[], getPollutedTextTagsLangA, getPollutedTextTagsLangB],
 			(res, item, index) => {
 				if (index === 0) {
-					if (!isEmpty(item)) {
+					if (isEmpty(otherAttribs?.lang)) {
 						return [
 							...res,
 							{
 								title: 'Language attributes are not used on the html element for each page',
-								subErrors: item,
-								subErrorCount: size(item),
+								subErrors: [{ records: [{ key: 'lang attribute', value: 'absent' }] }],
+								subErrorCount: 1,
 								errorType: 'error',
 								tags: [{ name: '3.1.1' }, { name: 'Level A' }],
 							},
@@ -101,12 +97,8 @@ export const ModuleSpecification: LayoutContainerProps = {
 		return {
 			'HTML lang': {
 				name: 'HTML lang',
-				type: !isEmpty(pollutedHTML)
-					? 'error'
-					: !isEmpty(getPollutedTextTagsLangA)
-					? 'warning'
-					: 'success',
-				count: size(pollutedHTML) + 2 * size(getPollutedTextTagsLangA) + 1,
+				type: 'success',
+				count: 0,
 				errors: [
 					{
 						title:

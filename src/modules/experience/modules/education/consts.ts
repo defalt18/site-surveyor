@@ -58,9 +58,14 @@ export const ModuleSpecification: LayoutContainerProps = {
 				errors: [
 					{
 						title: 'Add Skeleton loaders',
-						subErrors: [{ records: [] }],
+						subErrors: [
+							{
+								description:
+									'Add skeleton loader in case page content takes time to load due to slow internet connection.',
+							},
+						],
 						subErrorCount: 1,
-						errorType: 'warning',
+						errorType: 'success',
 					},
 					...errorDetail,
 				],
