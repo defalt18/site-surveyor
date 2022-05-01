@@ -38,7 +38,7 @@ export const FEATURES: Record<
 				path: '/disability/speech-impairment',
 			},
 			{
-				name: 'Hard of Hearing',
+				name: 'Deaf & Hard of Hearing',
 				icon: HomeEar,
 				disabled: false,
 				path: '/disability/hard-of-hearing',

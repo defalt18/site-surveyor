@@ -25,13 +25,13 @@ export default function Home() {
 									disabled={disabled}
 									key={index}
 									className={c(
-										'rounded-lg h-[10.2rem] text-primary text-white flex items-center',
+										'rounded-lg h-[10.2rem] text-primary text-white flex items-center justify-between gap-x-[2.4rem]',
 										FEATURES[key].bgColor
 									)}
 								>
-									<p className='text-primary pl-[2rem] w-4/6 text-left'>{item.name}</p>
+									<p className='text-primary pl-[2rem] text-left'>{item.name}</p>
 									{!!Icon && (
-										<div className='flex-shrink-0'>
+										<div className='flex-shrink-0 ml-auto mr-[1.2rem]'>
 											<Icon className={item.iconClassName} />
 										</div>
 									)}

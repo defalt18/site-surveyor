@@ -3,19 +3,28 @@ import Close from './assets/icons/Close';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { isEmpty, map } from 'lodash';
 import { ROUTES } from './routes';
+import { HeaderContext } from './context/HeaderContext';
+import { useCallback } from 'react';
 
-const Header = () => {
+const { Provider } = HeaderContext;
+
+const Header = ({ onBack }: { onBack: () => void }) => {
 	const location = useLocation();
-	const navigate = useNavigate();
 	const isHidden = isEmpty(location.state);
+	const navigate = useNavigate();
+	const DEFAULT_VALUE = useCallback(
+		// @ts-ignore
+		() => navigate(location.state?.details),
+		// @ts-ignore
+		[location.state?.details, navigate]
+	);
 
 	return (
 		<div className='bg-light-primary sticky top-0 z-10'>
 			<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg my-[0.5rem]'>
 				<button
 					disabled={isHidden}
-					// @ts-ignore
-					onClick={() => !isHidden && navigate(location.state.details)}
+					onClick={onBack ?? DEFAULT_VALUE}
 					className='w-[1.4rem] flex-shrink-0'
 				>
 					<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
@@ -29,20 +38,32 @@ const Header = () => {
 	);
 };
 
-function App() {
+function Layout({ children }: { children: React.ReactNode }) {
+	const [onBack, setBackFn] = React.useState<() => void>();
+
+	return (
+		<Provider value={{ setBackFn }}>
+			<Header onBack={onBack} />
+			{children}
+		</Provider>
+	);
+}
+
+function AppContainer() {
 	return (
 		<div className='w-[43.1rem] p-[0.6rem] pt-0 bg-light-primary h-[60rem] flex flex-col overflow-auto'>
 			<Router>
-				<Header />
-				<Routes>
-					{map(ROUTES, ({ element, ...routeItem }, index) => {
-						const Component = element || undefined;
-						return <Route {...routeItem} element={<Component />} key={index} />;
-					})}
-				</Routes>
+				<Layout>
+					<Routes>
+						{map(ROUTES, ({ element, ...routeItem }, index) => {
+							const Component = element || undefined;
+							return <Route {...routeItem} element={<Component />} key={index} />;
+						})}
+					</Routes>
+				</Layout>
 			</Router>
 		</div>
 	);
 }
 
-export default React.memo(App);
+export default React.memo(AppContainer);

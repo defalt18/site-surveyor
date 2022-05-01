@@ -86,7 +86,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 						{
 							title:
 								index === 0
-									? 'Absence of href attribute in a tag'
+									? 'Absence of href attribute in <a> tag'
 									: 'Actions are not keyboard accessible',
 							subErrors: item,
 							subErrorCount: size(item),
