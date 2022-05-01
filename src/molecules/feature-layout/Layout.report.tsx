@@ -15,12 +15,10 @@ const LayoutReport = (props: LayoutContainerProps) => {
 		errors,
 	} = React.useContext(LayoutContext);
 
-	const type = errors[checkpoint].type;
 	const { tags, tips, ErrorAccordion, errorRenderer } = React.useMemo(
 		() => keyBy(checkpoints, 'name')[checkpoint],
 		[checkpoints, checkpoint]
 	);
-	const totalErrorCount = errors[checkpoint].count;
 	const checkpointErrors = errors[checkpoint].errors;
 
 	const classifiedErrors = React.useMemo(

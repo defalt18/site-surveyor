@@ -1,7 +1,7 @@
 import { AnalysisErrors, LayoutContainerProps } from '../../../../molecules/feature-layout/types';
 import { ErrorRenderer } from '../../../utils/renderers';
 import { TextSVGIcon, AbbreviationIcon, WordsIcon } from '../../../../assets/icons';
-import { filter, isEmpty, reduce, size } from 'lodash';
+import { isEmpty, reduce } from 'lodash';
 
 export const ModuleSpecification: LayoutContainerProps = {
 	title: 'Language',
@@ -23,43 +23,8 @@ export const ModuleSpecification: LayoutContainerProps = {
 	],
 	testingEnabled: true,
 	checkUtility: async (dom, _, otherAttribs) => {
-		console.log('document', dom);
-		const nonEmptyTextNodes = filter(
-			dom.querySelectorAll(
-				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong, details, summary'
-			),
-			(node) => node.textContent.trim() !== ''
-		);
-		const getPollutedTextTagsLangA = reduce(
-			nonEmptyTextNodes,
-			(res, item) => [
-				...res,
-				{
-					records: [
-						{ key: 'Tag', value: `<${item.localName}>` },
-						{ key: 'Lang attribute', value: 'pt-br' },
-					],
-				},
-			],
-			[]
-		);
-
-		const getPollutedTextTagsLangB = reduce(
-			nonEmptyTextNodes,
-			(res, item) => [
-				...res,
-				{
-					records: [
-						{ key: 'Tag', value: `<${item.localName}>` },
-						{ key: 'Lang attribute', value: 'fr' },
-					],
-				},
-			],
-			[]
-		);
-
 		const allHTMLErrorsAndWarnings = reduce(
-			[[], getPollutedTextTagsLangA, getPollutedTextTagsLangB],
+			[[]],
 			(res, item, index) => {
 				if (index === 0) {
 					if (isEmpty(otherAttribs?.lang)) {
@@ -74,21 +39,6 @@ export const ModuleSpecification: LayoutContainerProps = {
 							},
 						];
 					}
-				}
-				if (index === 1 || index === 2) {
-					if (!isEmpty(item))
-						return [
-							...res,
-							{
-								title: `Ensure appropriate language token is used in the lang attribute (lang=${
-									index === 1 ? 'pt-br' : 'fr'
-								})`,
-								subErrors: item,
-								subErrorCount: size(item),
-								errorType: 'warning',
-								tags: [{ name: '3.1.2' }, { name: 'Level AA' }],
-							},
-						];
 				}
 				return res;
 			},

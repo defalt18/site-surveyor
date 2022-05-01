@@ -195,7 +195,7 @@ export const ModuleSpecification: LayoutContainerProps = {
 				name: 'Page Title',
 				type: isEmpty(dom.title) ? 'error' : 'success',
 				count: isEmpty(dom.title) ? 1 : 0,
-				errors: isEmpty(dom.title)
+				errors: isEmpty(dom.title.trim())
 					? [
 							{
 								title: 'Page does not have a proper title',
