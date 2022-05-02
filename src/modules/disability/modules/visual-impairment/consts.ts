@@ -118,11 +118,11 @@ export const ModuleSpecification: LayoutContainerProps = {
 					return [
 						...acc,
 						{
-							title: `Minimum contrast of '4.5' : 1  not satisfied`,
+							title: `Minimum contrast of 4.5 : 1  not satisfied`,
 							errorType: 'error',
 							tags: [
 								{ name: '1.4.3', color: 'bg-orange-primary' },
-								{ name: 'Level A', color: 'bg-orange-primary' },
+								{ name: 'Level AA', color: 'bg-orange-primary' },
 							],
 							subErrorCount: size(item),
 							subErrors: item,
