@@ -22,7 +22,7 @@ export const getComputedStyles = async (tabId: number) => {
 					const foreground = window.getComputedStyle(node).color;
 					let background = TRANSPARENT_CONTAINER;
 					let tempNode = node;
-					while (tempNode.parentElement !== null) {
+					while (tempNode) {
 						const color = window.getComputedStyle(tempNode).backgroundColor;
 						if (color !== TRANSPARENT_CONTAINER && color.split(',').length < 4) {
 							background = color;
