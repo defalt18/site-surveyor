@@ -20,19 +20,15 @@ export const getComputedStyles = async (tabId: number) => {
 					const fontSize = window.getComputedStyle(node).fontSize;
 					const textContent = node.textContent;
 					const foreground = window.getComputedStyle(node).color;
-					const itemBackground = window.getComputedStyle(node).backgroundColor;
 					let background = TRANSPARENT_CONTAINER;
 					let tempNode = node;
-					if (itemBackground !== TRANSPARENT_CONTAINER) background = itemBackground;
-					else {
-						while (tempNode.parentElement !== null) {
-							const color = window.getComputedStyle(tempNode).backgroundColor;
-							if (color !== TRANSPARENT_CONTAINER && color.split(',').length < 4) {
-								background = color;
-								break;
-							}
-							tempNode = tempNode.parentElement;
+					while (tempNode.parentElement !== null) {
+						const color = window.getComputedStyle(tempNode).backgroundColor;
+						if (color !== TRANSPARENT_CONTAINER && color.split(',').length < 4) {
+							background = color;
+							break;
 						}
+						tempNode = tempNode.parentElement;
 					}
 					if (fontSize < '16px') result.metaDataText.push({ text: textContent, size: fontSize });
 					if (background !== TRANSPARENT_CONTAINER)
