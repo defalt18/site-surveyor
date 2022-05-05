@@ -1,20 +1,32 @@
 import * as React from 'react';
 import Close from './assets/icons/Close';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { isEmpty, map } from 'lodash';
 import { ROUTES } from './routes';
 import { HeaderContext } from './context/HeaderContext';
+import { useCallback } from 'react';
 
 const { Provider } = HeaderContext;
 
 const Header = ({ onBack }: { onBack: () => void }) => {
 	const location = useLocation();
 	const isHidden = isEmpty(location.state);
+	const navigate = useNavigate();
+	const DEFAULT_VALUE = useCallback(
+		// @ts-ignore
+		() => navigate(location.state?.details),
+		// @ts-ignore
+		[location.state?.details, navigate]
+	);
 
 	return (
 		<div className='bg-light-primary sticky top-0 z-10'>
 			<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg my-[0.5rem]'>
-				<button disabled={isHidden} onClick={onBack} className='w-[1.4rem] flex-shrink-0'>
+				<button
+					disabled={isHidden}
+					onClick={onBack ?? DEFAULT_VALUE}
+					className='w-[1.4rem] flex-shrink-0'
+				>
 					<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
 				</button>
 				<p className='text-primary text-light-primary'>Check For Inclusivity</p>
