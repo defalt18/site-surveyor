@@ -6,9 +6,9 @@ export const HeaderContext = React.createContext<
 
 export function useHeaderContext(props?: { onBack: () => void }) {
 	const { onBack } = props;
+	const { setBackFn } = React.useContext(HeaderContext);
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { setBackFn } = React.useContext(HeaderContext);
 	const DEFAULT_VALUE = useCallback(
 		// @ts-ignore
 		() => navigate(location.state?.details),
