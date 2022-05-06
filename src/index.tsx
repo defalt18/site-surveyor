@@ -8,7 +8,11 @@ const App = React.lazy(() => import('./App'));
 
 function ExtensionContainer() {
 	return (
-		<React.Suspense fallback={<Loader className='bg-light-primary w-[43.1rem] h-[60rem]' />}>
+		<React.Suspense
+			fallback={
+				<Loader className='bg-light-primary w-[43.1rem] h-[60rem] grid place-items-center' />
+			}
+		>
 			<App />
 		</React.Suspense>
 	);
