@@ -8,17 +8,13 @@ const App = React.lazy(() => import('./App'));
 
 function ExtensionContainer() {
 	return (
-		<React.Suspense
-			fallback={
-				<Loader className='bg-light-primary w-[43.1rem] h-[60rem] grid place-items-center' />
-			}
-		>
+		<React.Suspense fallback={<Loader className='container grid place-items-center' />}>
 			<App />
 		</React.Suspense>
 	);
 }
 
-const rootContainer = document.getElementById('root');
+const rootContainer = createRoot(document.getElementById('root'));
 
 // New API root strategy
-createRoot(rootContainer).render(<ExtensionContainer />);
+rootContainer.render(<ExtensionContainer />);

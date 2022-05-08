@@ -61,3 +61,9 @@
     -moz-hyphens: auto;
     hyphens: auto;
 }
+
+.container {
+    background-color: #FFF8F2;
+    height: 60rem;
+    width: 43.1rem;
+}

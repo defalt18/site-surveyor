@@ -9,50 +9,52 @@ import GenderIdentity from './modules/identity/modules/gender-identity/views';
 import RaceAndEthnicity from './modules/identity/modules/race-and-ethinicity/views';
 import Education from './modules/experience/modules/education/views';
 import Language from './modules/experience/modules/language/views';
+import { getComponent } from './modules/utils/renderers';
+import { IndexRouteProps, LayoutRouteProps, PathRouteProps } from 'react-router-dom';
 
-export const ROUTES: Array<{ path: string; element: () => JSX.Element }> = [
+export const ROUTES: Array<PathRouteProps | IndexRouteProps | LayoutRouteProps> = [
 	{
 		path: '/disability/visual-impairment',
-		element: VisualImpairment,
+		element: getComponent(VisualImpairment),
 	},
 	{
 		path: '/disability/cognitive-disability',
-		element: CognitiveDisabilities,
+		element: getComponent(CognitiveDisabilities),
 	},
 	{
 		path: '/disability/hard-of-hearing',
-		element: HardOfHearing,
+		element: getComponent(HardOfHearing),
 	},
 	{
 		path: '/disability/motor-disability',
-		element: MotorDisabilities,
+		element: getComponent(MotorDisabilities),
 	},
 	{
 		path: '/disability/speech-impairment',
-		element: SpeechImpairment,
+		element: getComponent(SpeechImpairment),
 	},
 	{
 		path: '/identity/age',
-		element: Age,
+		element: getComponent(Age),
 	},
 	{
 		path: '/identity/gender-identity',
-		element: GenderIdentity,
+		element: getComponent(GenderIdentity),
 	},
 	{
 		path: '/identity/race-and-ethnicity',
-		element: RaceAndEthnicity,
+		element: getComponent(RaceAndEthnicity),
 	},
 	{
 		path: '/experience/education',
-		element: Education,
+		element: getComponent(Education),
 	},
 	{
 		path: '/experience/language',
-		element: Language,
+		element: getComponent(Language),
 	},
 	{
 		path: '*',
-		element: Home,
+		element: getComponent(Home),
 	},
 ];

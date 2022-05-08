@@ -44,22 +44,19 @@ function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<Provider value={{ setBackFn }}>
 			<Header onBack={onBack} />
-			{children}
+			<Routes>{children}</Routes>
 		</Provider>
 	);
 }
 
 function AppContainer() {
 	return (
-		<div className='w-[43.1rem] p-[0.6rem] pt-0 bg-light-primary h-[60rem] flex flex-col overflow-auto'>
+		<div className='container p-[0.6rem] pt-0 flex flex-col overflow-auto'>
 			<Router>
 				<Layout>
-					<Routes>
-						{map(ROUTES, ({ element, ...routeItem }, index) => {
-							const Component = element || undefined;
-							return <Route {...routeItem} element={<Component />} key={index} />;
-						})}
-					</Routes>
+					{map(ROUTES, (route, index) => (
+						<Route {...route} key={index} />
+					))}
 				</Layout>
 			</Router>
 		</div>

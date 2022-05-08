@@ -26,6 +26,7 @@ const COLORS: Record<string, Record<STATUS_TYPE, string>> = {
 const gridAutoStyles = css`
 	grid-template-columns: max-content auto;
 `;
+
 const renderValue = (className: string, value: string, meta: boolean | undefined) =>
 	meta ? (
 		<a className={c('no-underline hover:underline', className, 'text-blue-400')} href={value}>
@@ -226,3 +227,5 @@ export const TipRenderer = (tip: { description: string }, index: number, arr: Ar
 		/>
 	</div>
 );
+
+export const getComponent = (Component: React.ComponentType<any>) => <Component />;
