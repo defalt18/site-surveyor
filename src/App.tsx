@@ -11,13 +11,6 @@ const Header = ({ LeftNode }: { LeftNode: React.ReactNode }) => {
 	return (
 		<div className='bg-light-primary sticky top-0 z-10'>
 			<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg my-[0.5rem]'>
-				{/*<button*/}
-				{/*	disabled={isHidden}*/}
-				{/*	onClick={onBack ?? DEFAULT_VALUE}*/}
-				{/*	className='w-[1.4rem] flex-shrink-0'*/}
-				{/*>*/}
-				{/*	<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>*/}
-				{/*</button>*/}
 				<div className='w-[1.4rem] flex-shrink-0'>{LeftNode}</div>
 				<p className='text-primary text-light-primary'>Check For Inclusivity</p>
 				<button onClick={window.close}>
