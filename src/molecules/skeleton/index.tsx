@@ -26,7 +26,7 @@ const SkeletonSection: React.FC<{
 	buttonLabel?: string;
 	onClick?: (props?: any) => any;
 	titleClassName?: string;
-	children?: React.ReactNode;
+	children?: React.ReactElement<any> | Iterable<React.ReactNode>;
 }> = (props) => {
 	const {
 		className,

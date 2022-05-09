@@ -1,12 +1,11 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import c from 'classnames';
 import { keyBy, map, groupBy, values, reduce, sumBy } from 'lodash';
 import { LayoutContainerProps } from './types';
 import { SkeletonSection } from '../skeleton';
-import { LayoutContext } from './Layout.container';
 import { VIEWS } from './consts';
 import { DefaultErrorAccordion, ErrorCircle, TipRenderer } from '../../modules/utils/renderers';
-import { useHeaderContext } from '../../context/HeaderContext';
+import useLayoutContext from './hooks/useLayoutContext';
 
 const LayoutReport = (props: LayoutContainerProps) => {
 	const { title, checkpoints, errorRenderer: AnalysisErrorRenderer } = props;
@@ -14,10 +13,7 @@ const LayoutReport = (props: LayoutContainerProps) => {
 		screen: { checkpoint },
 		setView,
 		errors,
-	} = React.useContext(LayoutContext);
-
-	const goBack = useCallback(() => setView({ view: VIEWS.DETAILS }), [setView]);
-	useHeaderContext({ onBack: goBack });
+	} = useLayoutContext();
 
 	const { tags, tips, ErrorAccordion, errorRenderer } = React.useMemo(
 		() => keyBy(checkpoints, 'name')[checkpoint],
@@ -31,7 +27,13 @@ const LayoutReport = (props: LayoutContainerProps) => {
 				values(groupBy(checkpointErrors, 'errorType')),
 				(acc, item) => {
 					const sumOfItems = sumBy(item, 'subErrorCount');
-					return [...acc, { errorType: item[0].errorType, subErrorCount: sumOfItems }];
+					return [
+						...acc,
+						{
+							errorType: item[0].errorType,
+							subErrorCount: sumOfItems,
+						},
+					];
 				},
 				[]
 			),
@@ -79,7 +81,9 @@ const LayoutReport = (props: LayoutContainerProps) => {
 							shape='rect'
 							key={index}
 							label={errorType === 'success' ? 'Points of Inclusion' : undefined}
-							overrides={{ text: 'text-primary' }}
+							overrides={{
+								text: 'text-primary',
+							}}
 						/>
 					))}
 				</div>

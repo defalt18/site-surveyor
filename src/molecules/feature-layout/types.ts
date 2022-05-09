@@ -9,7 +9,7 @@ export type ErrorDetailsType = {
 		title: string;
 		errorType?: STATUS_TYPE;
 		subErrorCount?: number;
-		subErrors?: Array<any>;
+		subErrors?: Array<Record<string, Array<Record<string, string>> | string>>;
 		tips?: Array<{ description: string }>;
 		tags?: Array<{ name: string; color?: string }>;
 	}>;
@@ -37,7 +37,7 @@ export interface ErrorAccordionProps {
 	title: string;
 	type: STATUS_TYPE;
 	errorCount?: number;
-	subErrors?: Array<any>;
+	subErrors?: Array<Record<string, Array<Record<string, string>> | string>>;
 	tags?: Array<{ name: string; color?: string }>;
 	tips?: Array<{ description: string }>;
 	ErrorRenderer?: LayoutContainerProps['errorRenderer'];

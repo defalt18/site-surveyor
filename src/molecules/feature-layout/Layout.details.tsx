@@ -1,18 +1,21 @@
 import React from 'react';
+import c from 'classnames';
 import { LayoutContainerProps } from './types';
 import { VIEWS } from './consts';
-import { isUndefined, map, noop } from 'lodash';
+import { isEmpty, isUndefined, map, noop } from 'lodash';
 import { SkeletonIntroduction, SkeletonSection } from '../skeleton';
 import FeatureButton from './components/FeatureButton';
-import { LayoutContext } from './Layout.container';
 import usePageDom from '../../modules/hooks/usePageDom';
 import Loader from '../loader';
+import { CSVLink } from 'react-csv';
+import useLayoutContext from './hooks/useLayoutContext';
+import { getCSVProps } from './utils';
 
 const LayoutDetails = (props: LayoutContainerProps) => {
 	const { title, description, checkpoints, checkUtility, testingEnabled = true } = props;
 	const { dom, tabId, otherAttribs } = usePageDom();
 	const [loading, setLoading] = React.useState<boolean>(false);
-	const { errors, setErrors, setView } = React.useContext(LayoutContext);
+	const { errors, setErrors, setView } = useLayoutContext();
 
 	const onClickTest = React.useCallback(async () => {
 		setLoading(true);
@@ -28,6 +31,8 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 		},
 		[errors, setView]
 	);
+
+	const csvProps = !isUndefined(errors) ? getCSVProps(errors, title, dom?.title) : undefined;
 
 	return (
 		<div className='flex flex-col gap-y-[0.8rem] flex-grow'>
@@ -56,6 +61,17 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 							);
 						})}
 					</div>
+				)}
+				{!isUndefined(errors) && !isEmpty(csvProps?.data) && (
+					<CSVLink
+						{...csvProps}
+						className={c(
+							'm-[3.5rem] mt-[4.8rem] rounded-full px-[4.8rem] py-[1.6rem] bg-navy-primary text-primary text-white text-center relative'
+						)}
+					>
+						<span className='text-small text-white absolute top-4 right-6 font-bold'>BETA</span>
+						Download Report {'>'}
+					</CSVLink>
 				)}
 			</SkeletonSection>
 		</div>

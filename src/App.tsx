@@ -1,34 +1,24 @@
 import * as React from 'react';
 import Close from './assets/icons/Close';
-import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { isEmpty, map } from 'lodash';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { map } from 'lodash';
 import { ROUTES } from './routes';
 import { HeaderContext } from './context/HeaderContext';
-import { useCallback } from 'react';
 
 const { Provider } = HeaderContext;
 
-const Header = ({ onBack }: { onBack: () => void }) => {
-	const location = useLocation();
-	const isHidden = isEmpty(location.state);
-	const navigate = useNavigate();
-	const DEFAULT_VALUE = useCallback(
-		// @ts-ignore
-		() => navigate(location.state?.details),
-		// @ts-ignore
-		[location.state?.details, navigate]
-	);
-
+const Header = ({ LeftNode }: { LeftNode: React.ReactNode }) => {
 	return (
 		<div className='bg-light-primary sticky top-0 z-10'>
 			<div className='bg-dark-primary flex items-center justify-between py-[1.2rem] px-[1.4rem] rounded-lg my-[0.5rem]'>
-				<button
-					disabled={isHidden}
-					onClick={onBack ?? DEFAULT_VALUE}
-					className='w-[1.4rem] flex-shrink-0'
-				>
-					<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>
-				</button>
+				{/*<button*/}
+				{/*	disabled={isHidden}*/}
+				{/*	onClick={onBack ?? DEFAULT_VALUE}*/}
+				{/*	className='w-[1.4rem] flex-shrink-0'*/}
+				{/*>*/}
+				{/*	<span className='text-primary text-light-primary text-4xl'>{!isHidden ? '<' : ''}</span>*/}
+				{/*</button>*/}
+				<div className='w-[1.4rem] flex-shrink-0'>{LeftNode}</div>
 				<p className='text-primary text-light-primary'>Check For Inclusivity</p>
 				<button onClick={window.close}>
 					<Close />
@@ -39,11 +29,11 @@ const Header = ({ onBack }: { onBack: () => void }) => {
 };
 
 function Layout({ children }: { children: React.ReactNode }) {
-	const [onBack, setBackFn] = React.useState<() => void>();
+	const [LeftNode, setHeaderProps] = React.useState<React.ReactNode>();
 
 	return (
-		<Provider value={{ setBackFn }}>
-			<Header onBack={onBack} />
+		<Provider value={{ setHeaderProps }}>
+			<Header LeftNode={LeftNode} />
 			<Routes>{children}</Routes>
 		</Provider>
 	);

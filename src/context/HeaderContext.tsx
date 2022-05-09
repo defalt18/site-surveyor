@@ -1,22 +1,13 @@
-import React, { SetStateAction, Dispatch, useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { SetStateAction, Dispatch, useEffect, ReactNode } from 'react';
 export const HeaderContext = React.createContext<
-	{ setBackFn: Dispatch<SetStateAction<() => void>> } | undefined
+	{ setHeaderProps: Dispatch<SetStateAction<ReactNode>> } | undefined
 >(undefined);
 
-export function useHeaderContext(props?: { onBack: () => void }) {
-	const { onBack } = props;
-	const { setBackFn } = React.useContext(HeaderContext);
-	const location = useLocation();
-	const navigate = useNavigate();
-	const DEFAULT_VALUE = useCallback(
-		// @ts-ignore
-		() => navigate(location.state?.details),
-		// @ts-ignore
-		[location.state?.details, navigate]
-	);
+export function useHeaderContext(props?: { LeftNode: ReactNode }) {
+	const { LeftNode } = props;
+	const { setHeaderProps } = React.useContext(HeaderContext);
 	useEffect(() => {
-		setBackFn(() => onBack);
-		return () => setBackFn(() => DEFAULT_VALUE);
-	}, [setBackFn, onBack, DEFAULT_VALUE]);
+		setHeaderProps(LeftNode);
+		return () => setHeaderProps(undefined);
+	}, [setHeaderProps, LeftNode]);
 }
