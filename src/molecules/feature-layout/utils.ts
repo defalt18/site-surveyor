@@ -1,13 +1,5 @@
 import { AnalysisErrors } from './types';
-import { CommonPropTypes } from 'react-csv/components/CommonPropTypes';
 import { filter, isEmpty, reduce, values } from 'lodash';
-
-const headers = [
-	{ label: 'Checkpoint Name', key: 'details.checkpoint' },
-	{ label: 'Error Type', key: 'details.errorType' },
-	{ label: 'Error Title', key: 'details.title' },
-	{ label: 'Errors Info', key: 'details.info' },
-];
 
 export const getCSVProps = (errors: AnalysisErrors, disability: string, site_title: string) => {
 	const data = reduce(
@@ -27,21 +19,19 @@ export const getCSVProps = (errors: AnalysisErrors, disability: string, site_tit
 										if (literal.key === 'Colors')
 											return (
 												sentence +
-												`${literal.key} => Foreground: ${literal.foreground}, Background:${literal.background}\t`
+												`\n${literal.key} => Foreground: ${literal.foreground}, Background:${literal.background}\n`
 											);
-										return sentence + `${literal.key} : ${literal.value?.trim()}\t`;
+										return sentence + `\n${literal.key} : ${literal.value?.trim()}\n`;
 									},
 									''
 								);
 								return [
 									...subErrorAcc,
 									{
-										details: {
-											checkpoint,
-											title,
-											errorType,
-											info: infoSentence,
-										},
+										'Checkpoint Name': checkpoint,
+										'Error Type': errorType,
+										Title: title,
+										'Error Info': infoSentence,
 									},
 								];
 							},
@@ -57,9 +47,8 @@ export const getCSVProps = (errors: AnalysisErrors, disability: string, site_tit
 		[]
 	);
 	return {
-		headers,
 		data,
-		filename: `${site_title} ${disability} errors.csv`,
-		enclosingCharacter: '',
-	} as CommonPropTypes;
+		widths: [{ width: 20 }, { width: 20 }, { width: 60 }, { width: 170 }],
+		filename: `${site_title} ${disability} errors.xlsx`,
+	};
 };

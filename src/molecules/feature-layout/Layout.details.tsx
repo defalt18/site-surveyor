@@ -7,9 +7,9 @@ import { SkeletonIntroduction, SkeletonSection } from '../skeleton';
 import FeatureButton from './components/FeatureButton';
 import usePageDom from '../../modules/hooks/usePageDom';
 import Loader from '../loader';
-import { CSVLink } from 'react-csv';
 import useLayoutContext from './hooks/useLayoutContext';
 import { getCSVProps } from './utils';
+import * as XLSX from 'xlsx';
 
 const LayoutDetails = (props: LayoutContainerProps) => {
 	const { title, description, checkpoints, checkUtility, testingEnabled = true } = props;
@@ -32,7 +32,18 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 		[errors, setView]
 	);
 
-	const csvProps = !isUndefined(errors) ? getCSVProps(errors, title, dom?.title) : undefined;
+	const csvProps = React.useMemo(
+		() => (!isUndefined(errors) ? getCSVProps(errors, title, dom?.title) : undefined),
+		[dom?.title, errors, title]
+	);
+
+	const onDownloadReport = React.useCallback(() => {
+		const workbook = XLSX.utils.book_new();
+		const worksheet = XLSX.utils.json_to_sheet(csvProps.data);
+		worksheet['!cols'] = csvProps.widths;
+		XLSX.utils.book_append_sheet(workbook, worksheet, `${title} Errors`);
+		XLSX.writeFile(workbook, csvProps?.filename);
+	}, [csvProps?.data, csvProps?.filename, csvProps?.widths, title]);
 
 	return (
 		<div className='flex flex-col gap-y-[0.8rem] flex-grow'>
@@ -63,15 +74,15 @@ const LayoutDetails = (props: LayoutContainerProps) => {
 					</div>
 				)}
 				{!isUndefined(errors) && !isEmpty(csvProps?.data) && (
-					<CSVLink
-						{...csvProps}
+					<button
+						onClick={onDownloadReport}
 						className={c(
 							'm-[3.5rem] mt-[4.8rem] rounded-full px-[4.8rem] py-[1.6rem] bg-navy-primary text-primary text-white text-center relative'
 						)}
 					>
 						<span className='text-small text-white absolute top-4 right-6 font-bold'>BETA</span>
 						Download Report {'>'}
-					</CSVLink>
+					</button>
 				)}
 			</SkeletonSection>
 		</div>
