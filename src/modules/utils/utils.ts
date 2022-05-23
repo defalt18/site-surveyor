@@ -16,7 +16,14 @@ export const getComputedStyles = async (tabId: number) => {
 			);
 			const TRANSPARENT_CONTAINER = 'rgba(0, 0, 0, 0)';
 			allTexts.forEach((node) => {
-				if (node.textContent.trim() !== '') {
+				const nodeTextContent = node.textContent.trim();
+				const nodeStyle = window.getComputedStyle(node);
+				const isValid =
+					nodeTextContent !== '' &&
+					nodeStyle.visibility !== 'hidden' &&
+					node.getClientRects().length > 0 &&
+					nodeStyle.display !== 'none';
+				if (isValid) {
 					const fontSize = window.getComputedStyle(node).fontSize;
 					const textContent = node.textContent;
 					const foreground = window.getComputedStyle(node).color;

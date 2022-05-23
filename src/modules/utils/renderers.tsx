@@ -36,12 +36,13 @@ const renderValue = (className: string, value: string, meta: boolean | undefined
 		<p className={c('text-dark-primary', className)}>{value}</p>
 	);
 
-export const ErrorRenderer = (error: any) => {
+export const ErrorRenderer = (error: any, index: number) => {
 	const { records } = error;
 	if (isEmpty(records)) return null;
 	const isSingleRecord = size(records) === 1;
 	return (
 		<div
+			key={index}
 			className={c(
 				'grid gap-y-3 w-full gap-x-8 bg-white border border-t-0 border-brown-primary px-[1.9rem] py-[0.9rem] last:rounded-b-lg',
 				{ 'py-[2.1rem]': isSingleRecord },
