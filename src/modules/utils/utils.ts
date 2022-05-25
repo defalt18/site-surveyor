@@ -11,39 +11,63 @@ export const getComputedStyles = async (tabId: number) => {
 					fontSize: number;
 				}>;
 			} = { metaDataText: [], metaDataContrast: [] };
+
+			const getChildlessNode = (node: Element) => {
+				if (!node.hasChildNodes()) return node;
+				const childlessNode = node.cloneNode(true);
+				const children = childlessNode.childNodes;
+				children.forEach((child) => {
+					if (child.nodeType !== 3) childlessNode.removeChild(child);
+				});
+				return childlessNode as Element;
+			};
 			const allTexts = document.querySelectorAll(
-				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong, details, summary'
+				'p, h1, h2, h3, h4, h5, h6, span, button, a, pre, abbr, code, em, strong, details, summary, dl, section, div'
 			);
 			const TRANSPARENT_CONTAINER = 'rgba(0, 0, 0, 0)';
-			allTexts.forEach((node) => {
-				const nodeTextContent = node.textContent.trim();
-				const nodeStyle = window.getComputedStyle(node);
+			allTexts.forEach((actualNode) => {
+				const node = getChildlessNode(actualNode);
+				const textContent = node.textContent.trim();
+				const {
+					display,
+					visibility,
+					fontSize,
+					color: foreground,
+				} = window.getComputedStyle(actualNode);
 				const isValid =
-					nodeTextContent !== '' &&
-					nodeStyle.visibility !== 'hidden' &&
-					node.getClientRects().length > 0 &&
-					nodeStyle.display !== 'none';
+					textContent !== '' &&
+					visibility !== 'hidden' &&
+					actualNode.getClientRects().length > 0 &&
+					display !== 'none';
 				if (isValid) {
-					const fontSize = window.getComputedStyle(node).fontSize;
-					const textContent = node.textContent;
-					const foreground = window.getComputedStyle(node).color;
 					let background = TRANSPARENT_CONTAINER;
-					let tempNode = node;
+					let tempNode = actualNode;
 					while (tempNode) {
 						const color = window.getComputedStyle(tempNode).backgroundColor;
-						if (color !== TRANSPARENT_CONTAINER && color.split(',').length < 4) {
-							background = color;
-							break;
+						if (color !== TRANSPARENT_CONTAINER) {
+							if (color.split(',').length < 4) {
+								background = color;
+								break;
+							}
+							const alpha = parseFloat(color.split(',')[3]);
+							if (alpha > 0.4) {
+								background = color.split(',').slice(0, 3).join(',').replace('a', '') + ')';
+								break;
+							}
 						}
 						tempNode = tempNode.parentElement;
 					}
-					if (fontSize < '16px') result.metaDataText.push({ text: textContent, size: fontSize });
-					if (background !== TRANSPARENT_CONTAINER)
+					if (parseFloat(fontSize) < 16)
+						result.metaDataText.push({
+							text: textContent,
+							size: `${parseFloat(parseFloat(fontSize).toFixed(2))}px`,
+						});
+					if (background !== TRANSPARENT_CONTAINER && background !== foreground)
 						result.metaDataContrast.push({
 							text: textContent,
 							background,
 							foreground,
-							fontSize: parseInt(fontSize.slice(0, fontSize.length - 2)),
+							fontSize: parseFloat(parseFloat(fontSize).toFixed(2)),
 						});
 				}
 			});
