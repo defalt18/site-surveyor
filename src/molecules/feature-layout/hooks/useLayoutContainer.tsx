@@ -24,13 +24,16 @@ export default function useLayoutContainer() {
 		return setView({ view: VIEWS.DETAILS });
 	}, [navigate, screen, setView]);
 
-	useHeaderContext({
-		LeftNode: (
+	const LeftNode = React.useMemo(
+		() => (
 			<button onClick={onClick}>
 				<span className='text-primary text-light-primary text-4xl'>{'<'}</span>
 			</button>
 		),
-	});
+		[onClick]
+	);
+
+	useHeaderContext({ LeftNode });
 
 	const contextValue = useMemo(() => ({ errors, setErrors, screen, setView }), [errors, screen]);
 
