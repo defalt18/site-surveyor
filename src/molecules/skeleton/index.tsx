@@ -50,7 +50,7 @@ const SkeletonSection: React.FC<{
 						disabled={disabled}
 						onClick={onClick}
 						className={c(
-							'rounded-4xl w-[10rem] h-[3.2rem] text-primary text-light-primary bg-navy-primary',
+							'border border-lilac-primary rounded-4xl w-[10rem] h-[3.2rem] text-primary text-light-primary bg-navy-primary',
 							{ 'bg-navy-primary/20': disabled }
 						)}
 					>

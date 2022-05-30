@@ -15,6 +15,7 @@ module.exports = {
 				'red-primary': '#CC3A3A',
 				'yellow-primary': '#DFA91F',
 				'orange-primary': '#E98D6E',
+				'lilac-primary': '#C5B3CF',
 			},
 			borderRadius: {
 				'4xl': '3.2rem',
