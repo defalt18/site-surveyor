@@ -1,6 +1,6 @@
 import React from 'react';
 import c from 'classnames';
-import { keyBy, map, groupBy, values, reduce, sumBy } from 'lodash';
+import { keyBy, map, groupBy, values, reduce, sumBy, orderBy } from 'lodash';
 import { LayoutContainerProps } from './types';
 import { SkeletonSection } from '../skeleton';
 import { VIEWS } from './consts';
@@ -19,7 +19,7 @@ const LayoutReport = (props: LayoutContainerProps) => {
 		() => keyBy(checkpoints, 'name')[checkpoint],
 		[checkpoints, checkpoint]
 	);
-	const checkpointErrors = errors[checkpoint].errors;
+	const checkpointErrors = orderBy(errors[checkpoint].errors, 'errorType');
 
 	const classifiedErrors = React.useMemo(
 		() =>

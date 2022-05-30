@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import c from 'classnames';
-import { reduce, map, isEmpty, groupBy, keys, values, sumBy } from 'lodash';
+import { reduce, map, isEmpty, groupBy, keys, values, sumBy, orderBy } from 'lodash';
 import { ErrorDetailsType } from '../../types';
 import { ErrorCircle } from '../../../../modules/utils/renderers';
 
@@ -49,7 +49,7 @@ const FeatureButton = (props: ButtonProps) => {
 	const classifiedErrors = React.useMemo(
 		() =>
 			reduce(
-				values(groupBy(errors, 'errorType')),
+				values(groupBy(orderBy(errors, 'errorType'), 'errorType')),
 				(acc, item) => {
 					const sumOfItems = sumBy(item, 'subErrorCount');
 					return {
@@ -91,7 +91,7 @@ const FeatureButton = (props: ButtonProps) => {
 					{!showErrors ? (
 						<Icon />
 					) : !isEmpty(errors) ? (
-						map(keys(classifiedErrors), (keyName: 'success' | 'error' | 'warning', index) => (
+						map(keys(classifiedErrors), (keyName: STATUS_TYPE, index) => (
 							<ErrorCircle
 								key={index}
 								type={keyName}
