@@ -16,7 +16,7 @@ collected the developers’ feedback on the tool to test its usability.
 
 `Note : This tool is only supported on chromium based browsers`
 
-* Download the dist zip from [here](https://drive.google.com/drive/folders/1b7AojoHbUEW8XJ7dSx9XCIFwZ1GMHKHI?usp=share_link) and extract it anywhere on your device.
+* Download the dist zip from [here](https://drive.google.com/file/d/19_W0btN2tnF7MJu1FS8LldfxX3gp205b/view?usp=share_link) and extract it anywhere on your device.
 
 * Enable developer mode for chrome or chromium based browser. You may find it under `Extensions`. See screenshot below.
 
